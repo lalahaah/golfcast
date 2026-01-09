@@ -4,11 +4,11 @@ import '../models/weather_model.dart';
 
 /// OpenWeatherMap API를 호출하는 데이터 소스
 class RemoteWeatherDataSource {
-  // OpenWeatherMap API 키
-  static const String _apiKey = '8ec29cd4270c5f9a293772dd75055f2e';
-  // One Call API 2.5 (무료 플랜에서 사용 가능)
+  // OpenWeatherMap API 키 (One Call API 3.0 구독)
+  static const String _apiKey = 'b607e5c50e40765c5e425d9d1dd2fd27';
+  // One Call API 3.0
   static const String _baseUrl =
-      'https://api.openweathermap.org/data/2.5/onecall';
+      'https://api.openweathermap.org/data/3.0/onecall';
 
   final http.Client client;
 
@@ -45,7 +45,9 @@ class RemoteWeatherDataSource {
         final jsonData = json.decode(response.body) as Map<String, dynamic>;
         return WeatherDataModel.fromJson(jsonData);
       } else if (response.statusCode == 401) {
-        throw Exception('API 키가 유효하지 않습니다. (401 Unauthorized)');
+        throw Exception(
+          'API 키가 유효하지 않거나 One Call 3.0 구독이 필요합니다. (401 Unauthorized)\n메시지: ${response.body}',
+        );
       } else if (response.statusCode == 429) {
         throw Exception('API 호출 한도를 초과했습니다. (429 Too Many Requests)');
       } else if (response.statusCode == 403) {
