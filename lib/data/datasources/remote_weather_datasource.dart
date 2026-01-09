@@ -29,7 +29,7 @@ class RemoteWeatherDataSource {
       queryParameters: {
         'lat': lat.toString(),
         'lon': lon.toString(),
-        'exclude': 'minutely,daily,alerts',
+        'exclude': 'minutely,alerts',
         'units': 'metric',
         'lang': 'kr',
         'appid': _apiKey,
@@ -65,6 +65,31 @@ class RemoteWeatherDataSource {
     } catch (e) {
       if (e is Exception) rethrow;
       throw Exception('OpenWeatherMap 서버 연결 실패: $e');
+    }
+  }
+
+  /// 특정 좌표의 미세먼지 정보 조회
+  Future<Map<String, dynamic>> getAirPollution(double lat, double lon) async {
+    final uri =
+        Uri.parse(
+          'https://api.openweathermap.org/data/2.5/air_pollution',
+        ).replace(
+          queryParameters: {
+            'lat': lat.toString(),
+            'lon': lon.toString(),
+            'appid': _apiKey,
+          },
+        );
+
+    try {
+      final response = await client.get(uri);
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('미세먼지 데이터를 가져오는데 실패했습니다: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('대기질 서버 연결 실패: $e');
     }
   }
 }

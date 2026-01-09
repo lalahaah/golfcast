@@ -12,6 +12,8 @@ class HourlyWeather {
   final String weatherDescription;
   final String weatherIcon;
   final double? uvi; // UV index
+  final double? pm2_5;
+  final double? pm10;
 
   const HourlyWeather({
     required this.time,
@@ -26,6 +28,33 @@ class HourlyWeather {
     required this.weatherDescription,
     required this.weatherIcon,
     this.uvi,
+    this.pm2_5,
+    this.pm10,
+  });
+}
+
+/// 일별 날씨 데이터 (요약)
+class DailyWeather {
+  final DateTime date;
+  final double minTemp;
+  final double maxTemp;
+  final double rainProb; // 강수 확률 (0.0 ~ 1.0)
+  final double rainAmount; // mm
+  final double windSpeed; // m/s
+  final String weatherMain;
+  final String weatherDescription;
+  final String weatherIcon;
+
+  const DailyWeather({
+    required this.date,
+    required this.minTemp,
+    required this.maxTemp,
+    required this.rainProb,
+    required this.rainAmount,
+    required this.windSpeed,
+    required this.weatherMain,
+    required this.weatherDescription,
+    required this.weatherIcon,
   });
 }
 
@@ -36,6 +65,7 @@ class WeatherData {
   final String timezone;
   final HourlyWeather current;
   final List<HourlyWeather> hourly;
+  final List<DailyWeather> daily;
 
   const WeatherData({
     required this.lat,
@@ -43,6 +73,7 @@ class WeatherData {
     required this.timezone,
     required this.current,
     required this.hourly,
+    required this.daily,
   });
 
   /// 티오프 주요 시간대 (06:00 ~ 14:00) 필터링
@@ -52,5 +83,27 @@ class WeatherData {
       final hour = w.time.hour;
       return w.time.isAfter(now) && hour >= 6 && hour <= 14;
     }).toList();
+  }
+
+  /// 특정 날짜의 시간별 예보 필터링
+  List<HourlyWeather> getHourlyWeatherForDate(DateTime date) {
+    return hourly.where((w) {
+      return w.time.year == date.year &&
+          w.time.month == date.month &&
+          w.time.day == date.day;
+    }).toList();
+  }
+
+  /// 특정 날짜의 일별 요약 정보 가져오기
+  DailyWeather? getDailyWeatherForDate(DateTime date) {
+    try {
+      return daily.firstWhere((d) {
+        return d.date.year == date.year &&
+            d.date.month == date.month &&
+            d.date.day == date.day;
+      });
+    } catch (_) {
+      return null;
+    }
   }
 }
