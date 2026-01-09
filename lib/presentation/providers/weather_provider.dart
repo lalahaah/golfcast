@@ -59,12 +59,16 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
       double windSpeed;
       double rainAmount;
       double temperature;
+      double humidity;
+      double visibility;
 
       // 날짜를 선택하지 않았거나 오늘이면 현재 날씨 사용
       if (selectedDate == null) {
         windSpeed = weather.current.windSpeed;
         rainAmount = weather.current.rainAmount;
         temperature = weather.current.temperature;
+        humidity = weather.current.humidity.toDouble();
+        visibility = weather.current.visibility;
       } else {
         // 날짜를 선택한 경우
         final isToday =
@@ -89,11 +93,15 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
             windSpeed = targetHourWeather.windSpeed;
             rainAmount = targetHourWeather.rainAmount;
             temperature = targetHourWeather.temperature;
+            humidity = targetHourWeather.humidity.toDouble();
+            visibility = targetHourWeather.visibility;
           } else {
             // 오늘이지만 시간 미선택 시 현재 날씨
             windSpeed = weather.current.windSpeed;
             rainAmount = weather.current.rainAmount;
             temperature = weather.current.temperature;
+            humidity = weather.current.humidity.toDouble();
+            visibility = weather.current.visibility;
           }
         } else {
           // 미래 날짜이면 기획된 알고리즘에 따라 데이터 선택
@@ -110,6 +118,8 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
             windSpeed = peakHourWeather.windSpeed;
             rainAmount = peakHourWeather.rainAmount;
             temperature = peakHourWeather.temperature;
+            humidity = peakHourWeather.humidity.toDouble();
+            visibility = peakHourWeather.visibility;
           } else {
             // 48시간 이후: 일별 요약 데이터 사용
             final daily = weather.getDailyWeatherForDate(selectedDate);
@@ -118,6 +128,8 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
               rainAmount = daily.rainAmount;
               // 일별은 최고 기온을 기준으로 보수적 판단
               temperature = daily.maxTemp;
+              humidity = 50.0; // 일별 요약에는 습도가 없으므로 기본값
+              visibility = 10000.0; // 기본값
             } else {
               return null;
             }
@@ -129,12 +141,18 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
         windSpeed: windSpeed,
         rainAmount: rainAmount,
         temperature: temperature,
+        humidity: humidity,
+        visibility: visibility,
       );
 
       return GolfScore(
         score: result.score,
         status: result.status,
-        message: result.message,
+        summary: result.summary,
+        windAdvice: result.windAdvice,
+        rainAdvice: result.rainAdvice,
+        tempAdvice: result.tempAdvice,
+        fogAdvice: result.fogAdvice,
         windSpeed: windSpeed,
         rainAmount: rainAmount,
         temperature: temperature,

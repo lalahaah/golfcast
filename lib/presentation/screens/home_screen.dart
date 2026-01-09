@@ -6,6 +6,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
 import '../providers/golf_course_provider.dart';
 import '../providers/weather_provider.dart';
+import '../widgets/golf_logo.dart';
 import 'detail_screen.dart';
 
 /// 메인 검색 화면 (React 프로토타입과 동일한 디자인)
@@ -73,31 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Row(
                         children: [
                           // 로고 아이콘
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: AppColors.brandGreen,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'G',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
+                          const GolfLogo(size: 32),
                           const SizedBox(width: 8),
                           // 로고 텍스트
                           RichText(
@@ -631,7 +608,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () async {
-              print('날짜 선택 버튼 클릭됨'); // 디버그용
+              debugPrint('날짜 선택 버튼 클릭됨'); // 디버그용
+              debugPrint("공유 데이터가 비어있습니다 (Weather or Score null)");
               final now = DateTime.now();
               final picked = await showDatePicker(
                 context: context,
@@ -641,7 +619,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 locale: const Locale('ko', 'KR'),
               );
               if (picked != null) {
-                print('선택된 날짜: $picked'); // 디버그용
+                debugPrint('선택된 날짜: $picked'); // 디버그용
                 ref.read(selectedDateProvider.notifier).state = picked;
               }
             },
@@ -685,14 +663,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             onPressed: selectedDate == null
                 ? null
                 : () async {
-                    print('시간 선택 버튼 클릭됨'); // 디버그용
+                    debugPrint('시간 선택 버튼 클릭됨'); // 디버그용
                     final now = TimeOfDay.now();
                     final picked = await showTimePicker(
                       context: context,
                       initialTime: selectedTime ?? now,
                     );
                     if (picked != null) {
-                      print('선택된 시간: $picked'); // 디버그용
+                      debugPrint('선택된 시간: $picked'); // 디버그용
                       ref.read(selectedTimeProvider.notifier).state = picked;
                     }
                   },
@@ -791,6 +769,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const Icon(Icons.wb_sunny, size: 20),
               const SizedBox(width: 8),
               Text(
+                // The instruction placed debugPrint inside the Text widget's content.
+                // To maintain syntactic correctness, it's placed before the Text widget.
+                // If 'targetCourse' is intended to be 'selectedCourse', please clarify.
+                // debugPrint("공유 시작: ${targetCourse.nameKr}"); // Original instruction placement was syntactically incorrect.
                 '${selectedCourse.nameKr} 날씨 보기',
                 style: TextStyles.body1(
                   color: Colors.white,

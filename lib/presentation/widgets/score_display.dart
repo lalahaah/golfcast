@@ -85,7 +85,7 @@ class _ScoreDisplayState extends State<ScoreDisplay>
 
             // 메시지
             Text(
-              widget.score.message,
+              widget.score.summary,
               style: TextStyles.heading2(),
               textAlign: TextAlign.center,
             ),

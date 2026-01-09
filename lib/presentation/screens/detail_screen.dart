@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
-import '../../core/utils/golf_score_calculator.dart';
 import '../../domain/entities/golf_score.dart';
 import '../../domain/entities/weather_data.dart';
 import '../providers/golf_course_provider.dart';
@@ -333,7 +332,7 @@ class DetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '"${golfScore?.message ?? '데이터 보완 중...'}"',
+                  '"${golfScore?.summary ?? '데이터 보완 중...'}"',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -515,33 +514,55 @@ class DetailScreen extends ConsumerWidget {
                   top: 0,
                   right: 0,
                   child: Icon(
-                    Icons.location_on,
-                    size: 100,
+                    Icons.tips_and_updates_outlined,
+                    size: 80,
                     color: Colors.white.withValues(alpha: 0.05),
                   ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "CADDIE'S TIP",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF4ADE80), // green-400
-                      ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.auto_awesome,
+                          size: 16,
+                          color: Color(0xFF4ADE80),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "CADDIE'S TIP",
+                          style: TextStyle(
+                            fontSize: 12,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF4ADE80), // green-400
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      GolfScoreCalculator.getWindAdvice(
-                        golfScore?.windSpeed ?? 0,
-                      ),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: const Color(0xFFCBD5E1), // slate-300
-                        height: 1.5,
-                      ),
+                    const SizedBox(height: 16),
+                    _buildAdviceRow(
+                      Icons.air_rounded,
+                      golfScore?.windAdvice ?? '바람 정보를 불러오는 중...',
                     ),
+                    const SizedBox(height: 12),
+                    _buildAdviceRow(
+                      Icons.umbrella_rounded,
+                      golfScore?.rainAdvice ?? '강수 정보를 불러오는 중...',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildAdviceRow(
+                      Icons.thermostat_rounded,
+                      golfScore?.tempAdvice ?? '기온 정보를 불러오는 중...',
+                    ),
+                    if (golfScore?.fogAdvice != null) ...[
+                      const SizedBox(height: 12),
+                      _buildAdviceRow(
+                        Icons.cloud_queue_rounded,
+                        golfScore!.fogAdvice!,
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -701,5 +722,29 @@ class DetailScreen extends ConsumerWidget {
       default:
         return AppColors.textMuted;
     }
+  }
+
+  Widget _buildAdviceRow(IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: const Color(0xFF94A3B8), // slate-400
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFFCBD5E1), // slate-300
+              height: 1.5,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

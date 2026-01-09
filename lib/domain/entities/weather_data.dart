@@ -11,6 +11,7 @@ class HourlyWeather {
   final String weatherMain; // Clear, Clouds, Rain 등
   final String weatherDescription;
   final String weatherIcon;
+  final double visibility; // 시정 거리 (m)
   final double? uvi; // UV index
   final double? pm2_5;
   final double? pm10;
@@ -27,6 +28,7 @@ class HourlyWeather {
     required this.weatherMain,
     required this.weatherDescription,
     required this.weatherIcon,
+    required this.visibility,
     this.uvi,
     this.pm2_5,
     this.pm10,

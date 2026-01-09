@@ -14,6 +14,7 @@ class HourlyWeatherModel extends HourlyWeather {
     required super.weatherMain,
     required super.weatherDescription,
     required super.weatherIcon,
+    required super.visibility,
     super.uvi,
     super.pm2_5,
     super.pm10,
@@ -33,6 +34,7 @@ class HourlyWeatherModel extends HourlyWeather {
       weatherMain: json['weather'][0]['main'] as String,
       weatherDescription: json['weather'][0]['description'] as String,
       weatherIcon: json['weather'][0]['icon'] as String,
+      visibility: (json['visibility'] as num?)?.toDouble() ?? 10000.0,
       uvi: (json['uvi'] as num?)?.toDouble(),
     );
   }
@@ -51,6 +53,7 @@ class HourlyWeatherModel extends HourlyWeather {
       weatherMain: weatherMain,
       weatherDescription: weatherDescription,
       weatherIcon: weatherIcon,
+      visibility: visibility,
       uvi: uvi,
       pm2_5: pm2_5 ?? this.pm2_5,
       pm10: pm10 ?? this.pm10,

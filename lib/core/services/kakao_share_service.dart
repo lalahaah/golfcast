@@ -17,7 +17,7 @@ class KakaoShareService {
     final FeedTemplate template = FeedTemplate(
       content: Content(
         title: '${golfCourse.nameKr} 라운딩 지수: ${golfScore.score}점',
-        description: golfScore.message,
+        description: golfScore.summary,
         imageUrl: Uri.parse(
           imageUrl ??
               'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1000&auto=format&fit=crop', // 기본 골프장 이미지
