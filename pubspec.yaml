@@ -17,6 +17,8 @@ dependencies:
   lucide_icons_flutter: ^1.0.0
   flutter_localizations:
     sdk: flutter
+  kakao_flutter_sdk_share: ^1.10.0
+  kakao_flutter_sdk_common: ^1.10.0
 
 dev_dependencies:
   flutter_test:

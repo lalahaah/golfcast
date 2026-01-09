@@ -9,6 +9,7 @@ import '../../domain/entities/weather_data.dart';
 import '../providers/golf_course_provider.dart';
 import '../providers/weather_provider.dart';
 import '../widgets/skeleton_loader.dart';
+import '../../core/services/kakao_share_service.dart';
 
 /// 날씨 상세 화면 (React 프로토타입과 동일한 디자인)
 class DetailScreen extends ConsumerWidget {
@@ -45,19 +46,63 @@ class DetailScreen extends ConsumerWidget {
                 ),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, size: 24),
-                    color: AppColors.textBody,
-                    onPressed: () => Navigator.pop(context),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, size: 24),
+                      color: AppColors.textBody,
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   ),
-                  Text(golfCourse.nameKr, style: TextStyles.heading2()),
-                  IconButton(
-                    icon: const Icon(Icons.star_border, size: 24),
-                    color: AppColors.textMuted,
-                    onPressed: () {},
+                  Text(
+                    golfCourse.nameKr,
+                    style: TextStyles.heading2(),
+                    textAlign: TextAlign.center,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.star_border, size: 24),
+                          color: AppColors.textMuted,
+                          onPressed: () {},
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                          style: IconButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: Size.zero,
+                            padding: const EdgeInsets.all(4),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.share_outlined,
+                            size: 24,
+                            color: AppColors.textMuted,
+                          ),
+                          onPressed: () {
+                            if (golfScore != null) {
+                              KakaoShareService.shareGolfWeather(
+                                golfCourse: golfCourse,
+                                golfScore: golfScore,
+                              );
+                            }
+                          },
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                          style: IconButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: Size.zero,
+                            padding: const EdgeInsets.all(4),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
