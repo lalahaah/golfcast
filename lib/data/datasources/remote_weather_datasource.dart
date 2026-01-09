@@ -5,9 +5,10 @@ import '../models/weather_model.dart';
 /// OpenWeatherMap API를 호출하는 데이터 소스
 class RemoteWeatherDataSource {
   // OpenWeatherMap API 키
-  static const String _apiKey = 'eb9155305ba4fdd17fcded7d0eef6673';
+  static const String _apiKey = '8ec29cd4270c5f9a293772dd75055f2e';
+  // One Call API 2.5 (무료 플랜에서 사용 가능)
   static const String _baseUrl =
-      'https://api.openweathermap.org/data/3.0/onecall';
+      'https://api.openweathermap.org/data/2.5/onecall';
 
   final http.Client client;
 
@@ -44,15 +45,19 @@ class RemoteWeatherDataSource {
         final jsonData = json.decode(response.body) as Map<String, dynamic>;
         return WeatherDataModel.fromJson(jsonData);
       } else if (response.statusCode == 401) {
-        throw Exception('API 키가 유효하지 않습니다.');
+        throw Exception('API 키가 유효하지 않습니다. (401 Unauthorized)');
       } else if (response.statusCode == 429) {
-        throw Exception('API 호출 한도를 초과했습니다.');
+        throw Exception('API 호출 한도를 초과했습니다. (429 Too Many Requests)');
+      } else if (response.statusCode == 403) {
+        throw Exception('API 3.0은 유료입니다. 2.5 버전을 사용해주세요. (403 Forbidden)');
       } else {
-        throw Exception('날씨 데이터를 가져오는데 실패했습니다. (${response.statusCode})');
+        throw Exception(
+          '날씨 데이터를 가져오는데 실패했습니다.\nStatus: ${response.statusCode}\nBody: ${response.body}',
+        );
       }
     } catch (e) {
       if (e is Exception) rethrow;
-      throw Exception('기상청 연결 상태가 좋지 않습니다. 잠시 후 다시 시도해주세요.');
+      throw Exception('기상청 연결 상태가 좋지 않습니다. 잠시 후 다시 시도해주세요.\n오류: $e');
     }
   }
 }

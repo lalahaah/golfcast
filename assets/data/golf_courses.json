@@ -11,8 +11,8 @@
         "region_depth1": "경기",
         "region_depth2": "용인",
         "location": {
-            "lat": 37.351234,
-            "lon": 127.221567
+            "lat": 37.3195517,
+            "lon": 127.1791160
         },
         "course_type": "Public 54H"
     },
@@ -28,8 +28,8 @@
         "region_depth1": "인천",
         "region_depth2": "중구",
         "location": {
-            "lat": 37.451234,
-            "lon": 126.415678
+            "lat": 37.4539,
+            "lon": 126.4407
         },
         "course_type": "Public 72H"
     },
@@ -45,8 +45,8 @@
         "region_depth1": "경기",
         "region_depth2": "성남",
         "location": {
-            "lat": 37.423456,
-            "lon": 127.134567
+            "lat": 37.3826,
+            "lon": 127.0840
         },
         "course_type": "Membership 27H"
     },
@@ -62,8 +62,8 @@
         "region_depth1": "경기",
         "region_depth2": "안양",
         "location": {
-            "lat": 37.394567,
-            "lon": 126.956789
+            "lat": 37.3609,
+            "lon": 126.9219
         },
         "course_type": "Membership 36H"
     },
@@ -79,8 +79,8 @@
         "region_depth1": "경기",
         "region_depth2": "화성",
         "location": {
-            "lat": 37.267890,
-            "lon": 127.012345
+            "lat": 37.1389,
+            "lon": 126.9847
         },
         "course_type": "Public 27H"
     },
@@ -95,8 +95,8 @@
         "region_depth1": "경기",
         "region_depth2": "양주",
         "location": {
-            "lat": 37.823456,
-            "lon": 127.056789
+            "lat": 37.8234,
+            "lon": 127.0568
         },
         "course_type": "Public 36H"
     },
@@ -112,8 +112,8 @@
         "region_depth1": "경기",
         "region_depth2": "가평",
         "location": {
-            "lat": 37.831234,
-            "lon": 127.509876
+            "lat": 37.7447,
+            "lon": 127.5422
         },
         "course_type": "Public 27H"
     },
@@ -129,8 +129,8 @@
         "region_depth1": "경기",
         "region_depth2": "용인",
         "location": {
-            "lat": 37.267890,
-            "lon": 127.223456
+            "lat": 37.2322,
+            "lon": 127.1942
         },
         "course_type": "Public 36H"
     },
@@ -145,8 +145,8 @@
         "region_depth1": "경기",
         "region_depth2": "파주",
         "location": {
-            "lat": 37.751234,
-            "lon": 126.785678
+            "lat": 37.7512,
+            "lon": 126.7857
         },
         "course_type": "Public 27H"
     },
@@ -162,8 +162,8 @@
         "region_depth1": "경기",
         "region_depth2": "용인",
         "location": {
-            "lat": 37.351234,
-            "lon": 127.271567
+            "lat": 37.3512,
+            "lon": 127.2716
         },
         "course_type": "Membership 54H"
     }
