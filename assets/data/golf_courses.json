@@ -1,0 +1,170 @@
+[
+    {
+        "id": "gc_001",
+        "name_kr": "레이크사이드 CC",
+        "name_en": "Lakeside Country Club",
+        "aliases": [
+            "레이크사이드",
+            "용인 레이크",
+            "Lake Side"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "용인",
+        "location": {
+            "lat": 37.351234,
+            "lon": 127.221567
+        },
+        "course_type": "Public 54H"
+    },
+    {
+        "id": "gc_002",
+        "name_kr": "스카이72 골프클럽",
+        "name_en": "Sky72 Golf Club",
+        "aliases": [
+            "스카이72",
+            "하늘코스",
+            "Sky 72"
+        ],
+        "region_depth1": "인천",
+        "region_depth2": "중구",
+        "location": {
+            "lat": 37.451234,
+            "lon": 126.415678
+        },
+        "course_type": "Public 72H"
+    },
+    {
+        "id": "gc_003",
+        "name_kr": "남서울 CC",
+        "name_en": "Nam Seoul Country Club",
+        "aliases": [
+            "남서울",
+            "남서울컨트리",
+            "Nam Seoul"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "성남",
+        "location": {
+            "lat": 37.423456,
+            "lon": 127.134567
+        },
+        "course_type": "Membership 27H"
+    },
+    {
+        "id": "gc_004",
+        "name_kr": "안양 CC",
+        "name_en": "Anyang Country Club",
+        "aliases": [
+            "안양",
+            "안양컨트리",
+            "Anyang"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "안양",
+        "location": {
+            "lat": 37.394567,
+            "lon": 126.956789
+        },
+        "course_type": "Membership 36H"
+    },
+    {
+        "id": "gc_005",
+        "name_kr": "썬힐 CC",
+        "name_en": "Sun Hill Country Club",
+        "aliases": [
+            "썬힐",
+            "선힐",
+            "Sun Hill"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "화성",
+        "location": {
+            "lat": 37.267890,
+            "lon": 127.012345
+        },
+        "course_type": "Public 27H"
+    },
+    {
+        "id": "gc_006",
+        "name_kr": "레이크우드 CC",
+        "name_en": "Lakewood Country Club",
+        "aliases": [
+            "레이크우드",
+            "Lakewood"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "양주",
+        "location": {
+            "lat": 37.823456,
+            "lon": 127.056789
+        },
+        "course_type": "Public 36H"
+    },
+    {
+        "id": "gc_007",
+        "name_kr": "가평 베네스트 골프클럽",
+        "name_en": "Gapyeong Benest Golf Club",
+        "aliases": [
+            "가평베네스트",
+            "베네스트",
+            "Benest"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "가평",
+        "location": {
+            "lat": 37.831234,
+            "lon": 127.509876
+        },
+        "course_type": "Public 27H"
+    },
+    {
+        "id": "gc_008",
+        "name_kr": "블루원 용인",
+        "name_en": "Blue One Yongin",
+        "aliases": [
+            "블루원",
+            "용인블루원",
+            "Blue One"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "용인",
+        "location": {
+            "lat": 37.267890,
+            "lon": 127.223456
+        },
+        "course_type": "Public 36H"
+    },
+    {
+        "id": "gc_009",
+        "name_kr": "파인밸리 CC",
+        "name_en": "Pine Valley Country Club",
+        "aliases": [
+            "파인밸리",
+            "Pine Valley"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "파주",
+        "location": {
+            "lat": 37.751234,
+            "lon": 126.785678
+        },
+        "course_type": "Public 27H"
+    },
+    {
+        "id": "gc_010",
+        "name_kr": "88 CC",
+        "name_en": "88 Country Club",
+        "aliases": [
+            "팔팔",
+            "88컨트리",
+            "88"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "용인",
+        "location": {
+            "lat": 37.351234,
+            "lon": 127.271567
+        },
+        "course_type": "Membership 54H"
+    }
+]

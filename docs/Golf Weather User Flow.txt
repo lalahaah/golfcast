@@ -1,0 +1,58 @@
+⛳️ 골프 웨더(Golf Weather) UX/UI Flowchart1. 유저 플로우 개요이 문서는 사용자가 앱에 진입하여 날씨 정보를 확인하고 공유하기까지의 흐름을 시각화합니다.핵심 목표: "진입부터 결과 확인까지 3초 컷 (The 3-Second Rule)"2. Mermaid 다이어그램(이 코드는 Mermaid를 지원하는 에디터나 Notion, GitHub 등에서 순서도로 렌더링됩니다.)flowchart TD
+    %% 스타일 정의
+    classDef start fill:#333,stroke:#333,stroke-width:2px,color:#fff;
+    classDef process fill:#f9f9f9,stroke:#333,stroke-width:1px;
+    classDef decision fill:#fff,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
+    classDef display fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef data fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    classDef error fill:#ffebee,stroke:#c62828,stroke-width:2px;
+
+    %% 1. 진입 단계
+    Start((앱 실행)):::start --> Init[메인 화면 로드<br/>Focus: 검색창]:::process
+    
+    %% 2. 검색 단계
+    Init --> Input{검색어 입력}:::decision
+    Input -- "입력 중 (Debounce 300ms)" --> SearchLogic[DB 매칭 연산<br/>includes 부분일치]:::data
+    
+    SearchLogic --> ResultCheck{결과 유무}:::decision
+    ResultCheck -- 없음 --> NoData[안내: 검색 결과 없음]:::error
+    NoData --> Input
+    
+    ResultCheck -- 있음 --> ShowList[자동완성 리스트 노출<br/>골프장명 + 지역]:::display
+    
+    %% 3. 선택 및 로딩
+    ShowList --> Select[골프장 클릭]:::process
+    Select --> Loading[스켈레톤 UI 표시<br/>(Pulse Animation)]:::display
+    
+    Loading --> API_Call[OpenWeatherMap API 호출<br/>Lat/Lon 전송]:::data
+    
+    %% 4. 데이터 처리 및 예외
+    API_Call --> APICheck{API 성공?}:::decision
+    APICheck -- 실패/Timeout --> ErrorToast[토스트 메시지:<br/>기상청 연결 불안정]:::error
+    ErrorToast --> Input
+    
+    APICheck -- 성공 --> Algorithm[골프 지수 산출 알고리즘<br/>(바람/강수/기온 감점)]:::data
+    
+    %% 5. 결과 화면 (대시보드)
+    Algorithm --> ScoreCheck{골프 지수 점수}:::decision
+    
+    ScoreCheck -- "80~100점 (Good)" --> RenderGreen[테마: Green<br/>아이콘: 웃음/트로피]:::display
+    ScoreCheck -- "50~79점 (So-so)" --> RenderYellow[테마: Yellow<br/>아이콘: 평범/골프채]:::display
+    ScoreCheck -- "0~49점 (Bad)" --> RenderRed[테마: Red<br/>아이콘: 우산/경고]:::display
+    
+    %% 6. 상세 정보 렌더링
+    RenderGreen & RenderYellow & RenderRed --> RenderDetail[상세 정보 렌더링]:::display
+    
+    subgraph 상세_정보_구성 [View Components]
+        D1[타임라인: 티오프 시간 강조]
+        D2[4대 요소: 바람/기온/강수/UV]
+        D3[AI 캐디 조언: 텍스트 생성]
+    end
+    
+    RenderDetail --- D1 & D2 & D3
+    
+    %% 7. 종료/공유
+    D3 --> ShareAction{공유하기 클릭}:::decision
+    ShareAction -- Yes --> KakaoShare[카카오톡 공유<br/>OG Tag 생성]:::process
+    ShareAction -- No --> Exit((이탈/종료)):::start
+3. 단계별 상세 시나리오 (Step-by-Step Description)Phase 1: 진입 및 탐색 (Discovery)사용자 행동: 앱 접속 즉시 키패드가 올라온 상태로 검색창에 "스카이" 입력.시스템 동작:300ms 대기 후 검색 로직 실행 (서버/클라이언트 리소스 절약).DB에서 '스카이'가 포함된 '스카이72', '스카이밸리' 등을 찾아 리스트업.예외 처리: 오타 등으로 결과가 0건일 경우, "골프장 이름을 다시 확인해주세요"라는 부드러운 문구 노출.Phase 2: 데이터 로딩 및 분석 (Processing)사용자 행동: 리스트에서 본인이 갈 '스카이72 하늘코스' 선택.시스템 동작:즉시 화면을 전환하고 텍스트/이미지 자리에 회색 박스(Skeleton)를 띄움. (체감 대기시간 감소)백그라운드에서 Lat: 37.45, Lon: 126.41 좌표로 API 호출.받아온 날씨 데이터를 calculateGolfScore() 함수에 넣어 점수 계산.Phase 3: 결과 소비 (Consumption)사용자 행동: 점수(85점)와 초록색 배경을 보고 "아, 내일 가도 되겠다"고 1초 만에 판단.시스템 동작:점수에 따른 테마 컬러(Green) 적용.티오프 시간대(06:00~14:00)의 날씨를 가로 스크롤 영역 앞쪽에 배치.바람이 8m/s 이상일 경우 빨간색 텍스트로 "강풍 주의" 경고 표시.Phase 4: 확산 (Action)사용자 행동: 우측 상단 '공유하기' 버튼 클릭 -> 카카오톡 선택 -> 동반자 단톡방 전송.시스템 동작:OG Title 생성: "내일 스카이72 날씨: 85점! (바람 조금 붑니다)"클릭 유도 문구와 함께 링크 전송.
