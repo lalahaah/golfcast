@@ -84,12 +84,31 @@ class DetailScreen extends ConsumerWidget {
                             size: 24,
                             color: AppColors.textMuted,
                           ),
-                          onPressed: () {
-                            if (golfScore != null) {
-                              KakaoShareService.shareGolfWeather(
+                          onPressed: () async {
+                            if (golfScore == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('날씨 정보를 불러오는 중입니다...'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                              return;
+                            }
+
+                            try {
+                              await KakaoShareService.shareGolfWeather(
                                 golfCourse: golfCourse,
                                 golfScore: golfScore,
                               );
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('공유 중 오류가 발생했습니다: $e'),
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
                             }
                           },
                           constraints: const BoxConstraints(),
