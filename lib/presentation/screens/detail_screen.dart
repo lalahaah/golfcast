@@ -7,6 +7,7 @@ import '../../domain/entities/golf_score.dart';
 import '../../domain/entities/weather_data.dart';
 import '../providers/golf_course_provider.dart';
 import '../providers/weather_provider.dart';
+import '../providers/favorite_provider.dart';
 import '../widgets/skeleton_loader.dart';
 import '../../core/services/kakao_share_service.dart';
 
@@ -27,6 +28,8 @@ class DetailScreen extends ConsumerWidget {
         body: const Center(child: Text('골프장 정보가 없습니다.')),
       );
     }
+
+    final isFavorite = ref.watch(isFavoriteProvider(golfCourse.id));
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -67,9 +70,18 @@ class DetailScreen extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.star_border, size: 24),
-                          color: AppColors.textMuted,
-                          onPressed: () {},
+                          icon: Icon(
+                            isFavorite ? Icons.star : Icons.star_border,
+                            size: 24,
+                          ),
+                          color: isFavorite
+                              ? Colors.amber
+                              : AppColors.textMuted,
+                          onPressed: () {
+                            ref
+                                .read(favoriteIdsProvider.notifier)
+                                .toggleFavorite(golfCourse.id);
+                          },
                           constraints: const BoxConstraints(),
                           padding: EdgeInsets.zero,
                           style: IconButton.styleFrom(

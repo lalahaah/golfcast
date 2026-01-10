@@ -6,6 +6,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
 import '../providers/golf_course_provider.dart';
 import '../providers/weather_provider.dart';
+import '../providers/favorite_provider.dart';
 import '../widgets/golf_logo.dart';
 import 'detail_screen.dart';
 
@@ -19,36 +20,75 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
   bool _isLoading = false;
   Timer? _debounce;
 
   @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      if (mounted) {
+        setState(() {
+          _isFocused = _focusNode.hasFocus;
+        });
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    _focusNode.dispose();
     _debounce?.cancel();
     super.dispose();
   }
 
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    // 이미 선택된 골프장이 있는데 텍스트가 수정되면 선택 상태 해제 (리스트 재노출)
+    final selected = ref.read(selectedGolfCourseProvider);
+    if (selected != null && query != selected.nameKr) {
+      ref.read(selectedGolfCourseProvider.notifier).state = null;
+    }
+
+    if (query.isEmpty) {
+      // 검색어가 비면 즉시 상태 초기화하여 반응성 향상
+      ref.read(golfSearchQueryProvider.notifier).state = '';
+      ref.read(selectedGolfCourseProvider.notifier).state = null;
+      return;
+    }
+
     _debounce = Timer(const Duration(milliseconds: 300), () {
       ref.read(golfSearchQueryProvider.notifier).state = query;
     });
   }
 
+  void _resetToHome() {
+    setState(() {
+      _searchController.clear();
+      _isFocused = false;
+      _isLoading = false;
+    });
+    _focusNode.unfocus();
+    ref.read(golfSearchQueryProvider.notifier).state = '';
+    ref.read(selectedGolfCourseProvider.notifier).state = null;
+  }
+
   void _handleSearch(String name) {
+    _focusNode.unfocus();
     setState(() {
       _searchController.text = name;
       _isFocused = false;
       _isLoading = true;
     });
 
-    // 로딩 효과 후 상세 화면 이동
+    // 로딩 효과 후 상세 화면 이동 (실제 데이터 연동 시에는 데이터 로드 시점 조절)
     Timer(const Duration(milliseconds: 800), () {
       if (mounted) {
         setState(() => _isLoading = false);
-        // 선택된 골프장 찾기
         ref.read(golfSearchQueryProvider.notifier).state = name;
       }
     });
@@ -58,9 +98,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final searchResults = ref.watch(golfSearchResultsProvider);
     final selectedCourse = ref.watch(selectedGolfCourseProvider);
+    final favoritesAsync = ref.watch(favoriteCoursesProvider);
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
+      onTap: () {
+        _focusNode.unfocus();
+        if (_searchController.text.isEmpty) {
+          ref.read(golfSearchQueryProvider.notifier).state = '';
+          ref.read(selectedGolfCourseProvider.notifier).state = null;
+        }
+      },
       behavior: HitTestBehavior.opaque,
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -75,36 +122,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            // 로고 아이콘
-                            const GolfLogo(size: 32),
-                            const SizedBox(width: 8),
-                            // 로고 텍스트
-                            RichText(
-                              text: TextSpan(
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -0.5,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: 'Golf',
-                                    style: TextStyle(
-                                      color: AppColors.textStrong,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: 'Cast',
-                                    style: TextStyle(
-                                      color: AppColors.brandGreen,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        InkWell(
+                          onTap: _resetToHome,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
                             ),
-                          ],
+                            child: Row(
+                              children: [
+                                // 로고 아이콘
+                                const GolfLogo(size: 32),
+                                const SizedBox(width: 8),
+                                // 로고 텍스트
+                                RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: -0.5,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: 'Golf',
+                                        style: TextStyle(
+                                          color: AppColors.textStrong,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: 'Cast',
+                                        style: TextStyle(
+                                          color: AppColors.brandGreen,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                         // 공유 버튼
                         IconButton(
@@ -128,7 +185,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           children: [
                             // Hero 카피
                             AnimatedOpacity(
-                              opacity: _isFocused ? 0.4 : 1.0,
+                              opacity:
+                                  (_isFocused &&
+                                      _searchController.text.isNotEmpty)
+                                  ? 0.4
+                                  : 1.0,
                               duration: const Duration(milliseconds: 500),
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 500),
@@ -193,12 +254,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                                 child: TextField(
                                   controller: _searchController,
+                                  focusNode: _focusNode,
                                   autofocus: false,
                                   onChanged: _onSearchChanged,
-                                  onTap: () =>
-                                      setState(() => _isFocused = true),
-                                  onSubmitted: (_) =>
-                                      setState(() => _isFocused = false),
+                                  onSubmitted: (_) => _focusNode.unfocus(),
                                   decoration: InputDecoration(
                                     hintText: '골프장 이름 검색 (예: 레이크)',
                                     hintStyle: TextStyles.body1(
@@ -261,9 +320,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: 12),
 
-                            // 자동완성 드롭다운
+                            // 자동완성 드롭다운 (선택된 상태가 아닐 때만 노출)
                             if (_searchController.text.isNotEmpty &&
-                                !_isLoading)
+                                !_isLoading &&
+                                selectedCourse == null)
                               searchResults.when(
                                 data: (courses) {
                                   if (courses.isEmpty) {
@@ -298,6 +358,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                                         return InkWell(
                                           onTap: () {
+                                            setState(() {
+                                              _searchController.text =
+                                                  course.nameKr;
+                                            });
                                             ref
                                                     .read(
                                                       selectedGolfCourseProvider
@@ -305,6 +369,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     )
                                                     .state =
                                                 course;
+                                            _focusNode.unfocus();
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.all(20),
@@ -425,121 +490,159 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             // Idle 상태 콘텐츠
                             if (_searchController.text.isEmpty)
                               AnimatedOpacity(
-                                opacity: _isFocused ? 0.2 : 1.0,
+                                opacity:
+                                    (_isFocused &&
+                                        _searchController.text.isNotEmpty)
+                                    ? 0.2
+                                    : 1.0,
                                 duration: const Duration(milliseconds: 300),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // 최근 검색
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '최근 검색',
-                                          style: TextStyles.body1().copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {},
-                                          style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size.zero,
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap,
-                                          ),
-                                          child: Text(
-                                            '지우기',
-                                            style: TextStyles.caption()
-                                                .copyWith(
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                ),
-                                          ),
-                                        ),
-                                      ],
+                                    // 즐겨찾기
+                                    Text(
+                                      '즐겨찾기',
+                                      style: TextStyles.body1().copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 12),
-                                    InkWell(
-                                      onTap: () => _handleSearch('스카이72 골프클럽'),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(16),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                          border: Border.all(
-                                            color: AppColors.border,
-                                            width: 1,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.03,
-                                              ),
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 40,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.background,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Icon(
-                                                Icons.access_time,
-                                                color: AppColors.textMuted,
-                                                size: 18,
+                                    favoritesAsync.when(
+                                      data: (favorites) {
+                                        if (favorites.isEmpty) {
+                                          return Container(
+                                            padding: const EdgeInsets.all(24),
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              border: Border.all(
+                                                color: AppColors.border,
                                               ),
                                             ),
-                                            const SizedBox(width: 12),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '스카이72 GC',
-                                                    style: TextStyles.body1()
-                                                        .copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                            child: Column(
+                                              children: [
+                                                Icon(
+                                                  Icons.star_border,
+                                                  color: AppColors.textMuted
+                                                      .withValues(alpha: 0.3),
+                                                  size: 32,
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  '즐겨찾기한 골프장이 없습니다.\n상세 화면에서 별을 눌러보세요!',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyles.caption(
+                                                    color: AppColors.textMuted,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+
+                                        return Column(
+                                          children: favorites.map((course) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 12,
+                                              ),
+                                              child: InkWell(
+                                                onTap: () => _handleSearch(
+                                                  course.nameKr,
+                                                ),
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(
+                                                    16,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          16,
                                                         ),
+                                                    border: Border.all(
+                                                      color: AppColors.border,
+                                                      width: 1,
+                                                    ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withValues(
+                                                              alpha: 0.03,
+                                                            ),
+                                                        blurRadius: 4,
+                                                        offset: const Offset(
+                                                          0,
+                                                          2,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Text(
-                                                    '인천 중구',
-                                                    style: TextStyles.caption(),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        width: 40,
+                                                        height: 40,
+                                                        decoration: BoxDecoration(
+                                                          color: AppColors
+                                                              .background,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                20,
+                                                              ),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons.star,
+                                                          color:
+                                                              Colors.amber[400],
+                                                          size: 18,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              course.nameKr,
+                                                              style: TextStyles.body1()
+                                                                  .copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                            ),
+                                                            Text(
+                                                              course.fullRegion,
+                                                              style:
+                                                                  TextStyles.caption(),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                        Icons.chevron_right,
+                                                        color:
+                                                            AppColors.textMuted,
+                                                        size: 16,
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
+                                                ),
                                               ),
-                                            ),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 4,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.background,
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              child: Text(
-                                                '어제',
-                                                style: TextStyles.caption(),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                            );
+                                          }).toList(),
+                                        );
+                                      },
+                                      loading: () => const Center(
+                                        child: CircularProgressIndicator(),
                                       ),
+                                      error: (error, _) =>
+                                          const SizedBox.shrink(),
                                     ),
                                     const SizedBox(height: 32),
 

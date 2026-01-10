@@ -93,10 +93,18 @@ class GolfScoreCalculator {
   }) {
     // [Priority 0] 생존/안전 경고 (점수와 무관하게 출력)
     // 아무리 바람이 안 불어도 영하 5도면 골프 치기 힘듭니다.
-    if (sensibleTemp <= -5) return '🥶 혹한기 경보! 부상 위험이 큽니다. 옷 단단히 입으세요.';
-    if (sensibleTemp >= 35) return '🔥 야외 활동 자제! 살인적인 폭염입니다.';
-    if (rp >= 50) return '⛈ 폭우가 쏟아집니다. 라운딩이 불가능해 보입니다.';
-    if (wp >= 40) return '🌪 태풍급 강풍! 서 있기도 힘든 날씨입니다.';
+    if (sensibleTemp <= -5) {
+      return '🥶 혹한기 경보! 부상 위험이 큽니다. 옷 단단히 입으세요.';
+    }
+    if (sensibleTemp >= 35) {
+      return '🔥 야외 활동 자제! 살인적인 폭염입니다.';
+    }
+    if (rp >= 50) {
+      return '⛈ 폭우가 쏟아집니다. 라운딩이 불가능해 보입니다.';
+    }
+    if (wp >= 40) {
+      return '🌪 태풍급 강풍! 서 있기도 힘든 날씨입니다.';
+    }
 
     // [Priority 1] 주요 방해 요소 (Bad/Caution 구간일 때 명확한 원인 지목)
     if (score < 70) {
@@ -211,8 +219,9 @@ class GolfScoreCalculator {
     if (sensible < 8) return '🌬 많이 춥습니다. 얇은 옷을 여러 겹 껴입으세요 (Layering).';
     if (sensible >= 8 && sensible < 15) return '🧥 쌀쌀합니다. 몸이 굳지 않게 스트레칭 필수!';
     if (sensible >= 15 && sensible <= 25) return '✨ 춥지도 덥지도 않은 축복받은 기온입니다.';
-    if (sensible > 25 && sensible <= 30)
+    if (sensible > 25 && sensible <= 30) {
       return '😅 땀이 좀 납니다. 얼음물 챙기시고 수분 섭취 자주 하세요.';
+    }
     if (sensible > 30) return '🔥 찜통 더위! 우산으로 해 가리고 카트 그늘 이용하세요.';
     return '🌡 기온에 맞는 편안한 복장을 준비하세요.';
   }
