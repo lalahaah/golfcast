@@ -12,7 +12,8 @@ import '../providers/favorite_provider.dart';
 import '../widgets/skeleton_loader.dart';
 import '../../core/services/kakao_share_service.dart';
 import '../../core/services/nav_service.dart';
-import '../../core/services/app_share_service.dart';
+
+import 'settings_screen.dart';
 
 /// 날씨 상세 화면 (React 프로토타입과 동일한 디자인)
 class DetailScreen extends ConsumerWidget {
@@ -95,23 +96,17 @@ class DetailScreen extends ConsumerWidget {
                         ),
                         IconButton(
                           icon: Icon(
-                            Icons.share_outlined,
+                            Icons.settings_outlined,
                             size: 24,
                             color: AppColors.textMuted,
                           ),
-                          onPressed: () async {
-                            try {
-                              await AppShareService.shareApp();
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('공유 중 오류가 발생했습니다: $e'),
-                                    duration: const Duration(seconds: 3),
-                                  ),
-                                );
-                              }
-                            }
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SettingsScreen(),
+                              ),
+                            );
                           },
                           constraints: const BoxConstraints(),
                           padding: EdgeInsets.zero,

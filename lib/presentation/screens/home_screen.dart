@@ -10,6 +10,7 @@ import '../providers/favorite_provider.dart';
 import '../widgets/golf_logo.dart';
 import 'detail_screen.dart';
 import '../../core/services/app_share_service.dart';
+import 'settings_screen.dart';
 
 /// 메인 검색 화면 (React 프로토타입과 동일한 디자인)
 class HomeScreen extends ConsumerStatefulWidget {
@@ -164,14 +165,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ),
                         ),
-                        // 공유 버튼
-                        IconButton(
-                          icon: Icon(
-                            Icons.share_outlined,
-                            color: AppColors.textMuted,
-                            size: 24,
-                          ),
-                          onPressed: () => AppShareService.shareApp(),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // 공유 버튼
+                            IconButton(
+                              icon: Icon(
+                                Icons.share_outlined,
+                                color: AppColors.textMuted,
+                                size: 24,
+                              ),
+                              onPressed: () => AppShareService.shareApp(),
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              style: IconButton.styleFrom(
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                minimumSize: Size.zero,
+                                padding: const EdgeInsets.all(4),
+                              ),
+                            ),
+                            // 설정 버튼
+                            IconButton(
+                              icon: Icon(
+                                Icons.settings_outlined,
+                                color: AppColors.textMuted,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SettingsScreen(),
+                                  ),
+                                );
+                              },
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              style: IconButton.styleFrom(
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                minimumSize: Size.zero,
+                                padding: const EdgeInsets.all(4),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
