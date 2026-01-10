@@ -61,6 +61,8 @@
       <string>kakaokommon</string>
       <string>kakaolink</string>
       <string>kakaotalk-5.9.7</string>
+      <string>tmap</string>
+      <string>kakaomap</string>
     </array>
 </dict>
 </plist>

@@ -64,4 +64,50 @@ class KakaoShareService {
       rethrow; // 에러를 호출자에게 전달
     }
   }
+
+  /// 앱 홍보 링크 공유
+  static Future<void> shareAppLink() async {
+    try {
+      debugPrint('=== 앱 링크 공유 시작 ===');
+
+      bool isKakaoTalkSharingAvailable = await ShareClient.instance
+          .isKakaoTalkSharingAvailable();
+
+      final FeedTemplate template = FeedTemplate(
+        content: Content(
+          title: 'GolfCast - 스마트한 골프 날씨 파트너',
+          description: '전국 골프장의 실시간 날씨와 라운딩 지수를 확인하고, 최적의 티오프 시간을 찾아보세요!',
+          imageUrl: Uri.parse(
+            'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?q=80&w=1000&auto=format&fit=crop',
+          ),
+          link: Link(
+            mobileWebUrl: Uri.parse('https://golfcast.app'),
+            webUrl: Uri.parse('https://golfcast.app'),
+          ),
+        ),
+        buttons: [
+          Button(
+            title: '앱 내려받기',
+            link: Link(
+              mobileWebUrl: Uri.parse('https://golfcast.app'),
+              webUrl: Uri.parse('https://golfcast.app'),
+            ),
+          ),
+        ],
+      );
+
+      if (isKakaoTalkSharingAvailable) {
+        Uri uri = await ShareClient.instance.shareDefault(template: template);
+        await ShareClient.instance.launchKakaoTalk(uri);
+      } else {
+        Uri shareUrl = await WebSharerClient.instance.makeDefaultUrl(
+          template: template,
+        );
+        await launchBrowserTab(shareUrl);
+      }
+    } catch (error) {
+      debugPrint('❌ 앱 링크 공유 실패: $error');
+      rethrow;
+    }
+  }
 }

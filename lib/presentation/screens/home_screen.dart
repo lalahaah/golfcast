@@ -9,6 +9,7 @@ import '../providers/weather_provider.dart';
 import '../providers/favorite_provider.dart';
 import '../widgets/golf_logo.dart';
 import 'detail_screen.dart';
+import '../../core/services/app_share_service.dart';
 
 /// 메인 검색 화면 (React 프로토타입과 동일한 디자인)
 class HomeScreen extends ConsumerStatefulWidget {
@@ -170,7 +171,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: AppColors.textMuted,
                             size: 24,
                           ),
-                          onPressed: () {},
+                          onPressed: () => AppShareService.shareApp(),
                         ),
                       ],
                     ),

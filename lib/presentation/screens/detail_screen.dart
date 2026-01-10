@@ -5,11 +5,14 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
 import '../../domain/entities/golf_score.dart';
 import '../../domain/entities/weather_data.dart';
+import '../../domain/entities/golf_course.dart';
 import '../providers/golf_course_provider.dart';
 import '../providers/weather_provider.dart';
 import '../providers/favorite_provider.dart';
 import '../widgets/skeleton_loader.dart';
 import '../../core/services/kakao_share_service.dart';
+import '../../core/services/nav_service.dart';
+import '../../core/services/app_share_service.dart';
 
 /// 날씨 상세 화면 (React 프로토타입과 동일한 디자인)
 class DetailScreen extends ConsumerWidget {
@@ -97,21 +100,8 @@ class DetailScreen extends ConsumerWidget {
                             color: AppColors.textMuted,
                           ),
                           onPressed: () async {
-                            if (golfScore == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('날씨 정보를 불러오는 중입니다...'),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                              return;
-                            }
-
                             try {
-                              await KakaoShareService.shareGolfWeather(
-                                golfCourse: golfCourse,
-                                golfScore: golfScore,
-                              );
+                              await AppShareService.shareApp();
                             } catch (e) {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -150,6 +140,7 @@ class DetailScreen extends ConsumerWidget {
                   weather,
                   golfScore,
                   selectedDate,
+                  golfCourse,
                 ),
                 loading: () => const SkeletonLoader(),
                 error: (error, stack) => _buildError(context, ref, error),
@@ -236,6 +227,7 @@ class DetailScreen extends ConsumerWidget {
     WeatherData weather,
     GolfScore? golfScore,
     DateTime? selectedDate,
+    GolfCourse golfCourse,
   ) {
     // 점수에 따른 색상 및 텍스트
     Color scoreColor;
@@ -654,7 +646,189 @@ class DetailScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
+
+          // 골프장으로 출발하기 섹션
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.navigation_outlined,
+                    size: 18,
+                    color: AppColors.textStrong,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '골프장으로 출발하기',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textStrong,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  // 티맵 버튼
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        try {
+                          await NavService.launchTmap(
+                            name: golfCourse.nameKr,
+                            lat: golfCourse.lat,
+                            lon: golfCourse.lon,
+                          );
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0064FF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.map_outlined,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '티맵',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // 카카오맵 버튼
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        await NavService.launchKakaoMap(
+                          name: golfCourse.nameKr,
+                          lat: golfCourse.lat,
+                          lon: golfCourse.lon,
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFE812), // 카카오 노란색
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 18,
+                              color: Colors.black87,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '카카오맵',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // 동반자에게 공유하기 버튼 추가
+          InkWell(
+            onTap: () async {
+              if (golfScore == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('날씨 정보를 불러오는 중입니다...'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+                return;
+              }
+
+              try {
+                await KakaoShareService.shareGolfWeather(
+                  golfCourse: golfCourse,
+                  golfScore: golfScore,
+                );
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('공유 중 오류가 발생했습니다: $e'),
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              }
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              decoration: BoxDecoration(
+                color: AppColors.brandGreen.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.brandGreen.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.share_rounded,
+                    size: 20,
+                    color: AppColors.brandGreen,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '동반자에게 공유하기',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.brandGreen,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
         ],
       ),
     );

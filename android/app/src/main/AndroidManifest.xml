@@ -50,5 +50,13 @@
             <data android:mimeType="text/plain"/>
         </intent>
         <package android:name="com.kakao.talk" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="tmap" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="kakaomap" />
+        </intent>
     </queries>
 </manifest>
