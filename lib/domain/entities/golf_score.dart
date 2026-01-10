@@ -7,9 +7,14 @@ class GolfScore {
   final String rainAdvice; // 강수 조언
   final String tempAdvice; // 기온/체감온도 조언
   final String? fogAdvice; // 안개 조언 (없으면 null)
+
+  // 실제 계산에 사용된 원본 값들 (상세 분석 표시용)
   final double windSpeed;
   final double rainAmount;
   final double temperature;
+  final double feelsLike;
+  final int humidity;
+  final double? uvi;
 
   const GolfScore({
     required this.score,
@@ -22,6 +27,9 @@ class GolfScore {
     required this.windSpeed,
     required this.rainAmount,
     required this.temperature,
+    required this.feelsLike,
+    required this.humidity,
+    this.uvi,
   });
 
   /// 점수가 아주 좋은가? (90점 이상)

@@ -2,13 +2,13 @@ import 'dart:math';
 
 /// 골프 지수 계산 결과 모델
 class GolfScoreResult {
-  final int score; // 0~100점
-  final String status; // 'perfect', 'good', 'soso', 'bad', 'worst'
-  final String summary; // 한 줄 요약 (헤드라인)
-  final String windAdvice; // 바람 조언
-  final String rainAdvice; // 강수 조언
-  final String tempAdvice; // 기온/체감온도 조언
-  final String? fogAdvice; // 안개 조언 (없으면 null)
+  final int score;
+  final String status;
+  final String summary;
+  final String windAdvice;
+  final String rainAdvice;
+  final String tempAdvice;
+  final String? fogAdvice;
 
   const GolfScoreResult({
     required this.score,
@@ -21,15 +21,9 @@ class GolfScoreResult {
   });
 }
 
-/// Advanced Golf Score Calculator
-/// 기획서 v1.1 반영: 체감온도, 안개, 세분화된 풍속/강수 적용
+/// Advanced Golf Score Calculator V2.2 (Safety First Edition)
+/// 개선사항: 점수보다 '생존/안전'과 직결된 극한 날씨(혹한/폭염/폭우)를 최우선 순위로 체크하여 멘트 생성
 class GolfScoreCalculator {
-  /// 메인 계산 함수
-  /// [windSpeed]: 풍속 (m/s)
-  /// [rainAmount]: 시간당 강수량 (mm)
-  /// [temperature]: 기온 (°C)
-  /// [humidity]: 습도 (%) - 안개 예측용
-  /// [visibility]: 시정 거리 (m) - 안개 예측용 (API 제공 시)
   static GolfScoreResult calculate({
     required double windSpeed,
     required double rainAmount,
@@ -37,29 +31,32 @@ class GolfScoreCalculator {
     double humidity = 50.0,
     double visibility = 10000.0,
   }) {
-    // 1. 체감 온도 계산 (Jagur formula 간소화: 바람 1m/s당 약 0.7~1도 체감 하락)
-    // 겨울철 골프에 매우 중요한 요소
+    // 1. 체감 온도 계산
     double sensibleTemp = temperature - (windSpeed * 0.7);
 
-    // 2. 페널티 계산
+    // 2. 페널티 계산 (혹한/폭염 페널티 강화)
     int windPenalty = _calculateWindPenalty(windSpeed);
     int rainPenalty = _calculateRainPenalty(rainAmount);
     int tempPenalty = _calculateTempPenalty(sensibleTemp);
     int fogPenalty = _calculateFogPenalty(humidity, visibility);
 
-    // 3. 최종 점수 (0점 미만 방지)
+    // 3. 최종 점수 (최소 0점)
     int finalScore = max(
       0,
       100 - windPenalty - rainPenalty - tempPenalty - fogPenalty,
     );
 
-    // 4. 상태 및 멘트 생성
+    // 4. 상태 결정
     String status = _determineStatus(finalScore);
-    String summary = _generateSummary(
-      finalScore,
-      windPenalty,
-      rainPenalty,
-      tempPenalty,
+
+    // V2.2: Safety First 로직 적용 (점수 구간보다 극한 조건을 먼저 체크)
+    String summary = _generateSafetyFirstSummary(
+      score: finalScore,
+      sensibleTemp: sensibleTemp,
+      wp: windPenalty,
+      rp: rainPenalty,
+      tp: tempPenalty,
+      fp: fogPenalty,
     );
 
     return GolfScoreResult(
@@ -78,89 +75,151 @@ class GolfScoreCalculator {
   static String _determineStatus(int score) {
     if (score >= 90) return 'perfect';
     if (score >= 80) return 'good';
-    if (score >= 60) return 'soso';
-    if (score >= 40) return 'bad';
+    if (score >= 70) return 'fair';
+    if (score >= 50) return 'caution'; // 기준 조정 (55->50)
+    if (score >= 30) return 'bad'; // 기준 조정 (40->30)
     return 'worst';
   }
 
-  static String _generateSummary(int score, int wp, int rp, int tp) {
-    if (rp >= 40) return '☔️ 우천으로 라운딩이 힘들 수 있어요.';
-    if (wp >= 30) return '💨 강풍 주의! 스코어 관리가 관건입니다.';
-    if (score >= 90) return '⛳️ 핑계 댈 게 없는 완벽한 날씨!';
-    if (score >= 80) return '🏌️ 라베 도전하기 딱 좋은 날입니다.';
-    if (score <= 40) return '🏠 오늘은 집에서 쉬는 게 이득일지도...';
-    return '🙂 무난한 날씨, 전략적인 플레이가 필요해요.';
+  /// V2.2: 안전 우선 요약 멘트 생성기
+  /// 로직 순서: 절대적 위험 요소(Safety Check) -> 점수 구간별 멘트(Score Check)
+  static String _generateSafetyFirstSummary({
+    required int score,
+    required double sensibleTemp,
+    required int wp,
+    required int rp,
+    required int tp,
+    required int fp,
+  }) {
+    // [Priority 0] 생존/안전 경고 (점수와 무관하게 출력)
+    // 아무리 바람이 안 불어도 영하 5도면 골프 치기 힘듭니다.
+    if (sensibleTemp <= -5) return '🥶 혹한기 경보! 부상 위험이 큽니다. 옷 단단히 입으세요.';
+    if (sensibleTemp >= 35) return '🔥 야외 활동 자제! 살인적인 폭염입니다.';
+    if (rp >= 50) return '⛈ 폭우가 쏟아집니다. 라운딩이 불가능해 보입니다.';
+    if (wp >= 40) return '🌪 태풍급 강풍! 서 있기도 힘든 날씨입니다.';
+
+    // [Priority 1] 주요 방해 요소 (Bad/Caution 구간일 때 명확한 원인 지목)
+    if (score < 70) {
+      // 비가 올 때
+      if (rp >= 20) {
+        if (rp >= 40) return '🌧 비가 많이 옵니다. 우비 없으면 플레이가 힘듭니다.';
+        return '☔️ 비가 변수네요. 그립과 장갑 관리가 스코어를 가릅니다.';
+      }
+      // 바람이 불 때
+      if (wp >= 20) {
+        if (wp >= 30) return '💨 강풍 주의! 공이 멋대로 날아다닐 수 있습니다.';
+        return '🍃 바람이 꽤 셉니다. 한두 클럽 넉넉하게 잡으세요.';
+      }
+      // 안개가 꼈을 때
+      if (fp >= 15) return '🌫 곰탕(짙은 안개)입니다. 캐디님 방향 지시를 믿으세요.';
+
+      // 춥거나 더울 때 (극한까진 아니지만 힘든 날씨)
+      if (tp >= 15) {
+        // 페널티가 있다는 건 불편하다는 뜻
+        if (sensibleTemp <= 0) return '❄️ 체감 영하권입니다. 핫팩과 귀마개 필수!';
+        if (sensibleTemp <= 5) return '😨 손발이 시린 추위입니다. 보온에 신경 쓰세요.';
+        if (sensibleTemp >= 30) return '☀️ 꽤 덥습니다. 얼음물 챙기시고 그늘을 찾으세요.';
+      }
+    }
+
+    // [Priority 2] 무난하거나 좋은 날씨 (점수 구간별 뉘앙스)
+    // 위에서 위험 요소를 다 걸러냈으므로, 여기서는 긍정/중립적 멘트 제공
+
+    // 90점 이상
+    if (score >= 90) return '⛳️ 천국 같은 날씨! 오늘 라베 못하면 날씨 탓 못해요 😉';
+
+    // 80점 이상
+    if (score >= 80) {
+      if (sensibleTemp < 10) return '🏌️ 날씨는 좋은데 공기는 차갑습니다. 겉옷 챙기세요.';
+      if (wp > 0) return '🏌️ 쾌적하지만 바람 계산은 필요합니다.';
+      return '🏌️ 핑계 댈 것 없는 훌륭한 날씨입니다. 굿샷 하세요!';
+    }
+
+    // 70점 이상 (Fair)
+    if (score >= 70) {
+      if (sensibleTemp < 10) return '🌡 약간 쌀쌀하네요. 가벼운 겉옷이나 조끼 추천합니다.';
+      if (sensibleTemp > 25) return '🌡 조금 덥습니다. 시원한 물 자주 마시세요.';
+      if (wp > 0) return '🍃 바람이 살짝 불지만 플레이에 지장은 없습니다.';
+      if (rp > 0) return '🌂 이슬비가 살짝 스칩니다. 모자만 쓰면 괜찮아요.';
+      return '🙂 전반적으로 무난합니다. 평소 실력 발휘해 보세요!';
+    }
+
+    // 그 외 (혹시 모를 예외 처리)
+    return '😐 날씨 변수가 조금 있습니다. 침착하게 플레이하세요.';
   }
 
-  // 바람 감점 (5단계 세분화)
+  // --- 감점 계산 로직 (기존 대비 극한 날씨 페널티 강화) ---
   static int _calculateWindPenalty(double w) {
-    if (w <= 2) return 0; // 고요
-    if (w <= 5) return 5; // 산들 (쾌적)
-    if (w <= 8) return 15; // 흔들 (약간 방해)
-    if (w <= 11) return 30; // 강풍 (방해 심함)
-    return 50; // 악천후
+    if (w <= 2) return 0;
+    if (w <= 5) return 5;
+    if (w <= 8) return 15;
+    if (w <= 11) return 30;
+    return 50; // 12m/s 이상은 플레이 불가 수준
   }
 
-  // 강수 감점 (4단계 세분화)
   static int _calculateRainPenalty(double r) {
     if (r <= 0) return 0;
-    if (r <= 1) return 10; // 이슬비
-    if (r <= 4) return 25; // 보통 비
-    if (r <= 9) return 40; // 꽤 오는 비
-    return 60; // 호우
+    if (r <= 1) return 10;
+    if (r <= 4) return 25;
+    if (r <= 9) return 40;
+    return 60; // 10mm 이상은 폭우
   }
 
-  // 기온 감점 (체감온도 기준)
   static int _calculateTempPenalty(double t) {
-    if (t >= 15 && t <= 25) return 0; // Golden Zone
-    if (t >= 10 && t < 15) return 5; // 약간 쌀쌀
-    if (t > 25 && t <= 30) return 5; // 약간 더움
-    if (t >= 5 && t < 10) return 10; // 추움
-    if (t > 30 && t <= 33) return 15; // 더움
-    if (t < 5 || t > 33) return 30; // 혹한/혹서
+    // Best Zone (18~24도)
+    if (t >= 18 && t <= 24) return 0;
+    // Good Zone
+    if (t >= 15 && t < 18) return 5;
+    if (t > 24 && t <= 28) return 5;
+    // Caution Zone
+    if (t >= 8 && t < 15) return 15; // 쌀쌀함 페널티 상향 (10->15)
+    if (t > 28 && t <= 32) return 15; // 더움 페널티 상향 (10->15)
+    // Warning Zone
+    if (t >= 0 && t < 8) return 30; // 꽤 추움
+    if (t > 32 && t <= 35) return 30; // 폭염 주의
+    // Danger Zone (신설)
+    if (t < 0 || t > 35) return 50; // 영하/살인적 더위는 50점 감점 (Fair 진입 불가)
+
     return 10;
   }
 
-  // 안개 감점
-  static int _calculateFogPenalty(double humidity, double visibility) {
-    // 습도가 높고 시야가 좁으면 안개 가능성 높음
-    if (visibility < 500 || humidity >= 95) return 15;
-    if (humidity >= 85) return 5;
+  static int _calculateFogPenalty(double h, double v) {
+    if (v < 200 || h >= 98) return 20;
+    if (h >= 90) return 10;
     return 0;
   }
 
-  // --- 멘트 생성 로직 (상세) ---
-
+  // --- Advice 로직 (동일 유지) ---
   static String _getWindAdvice(double w) {
     if (w <= 2) return '🚩 깃대가 멈춰 있습니다. 핀을 바로 보고 쏘세요!';
-    if (w <= 5) return '🍃 기분 좋은 산들바람입니다. 평소 거리대로 공략하세요.';
-    if (w <= 8) return '🚩 깃발이 펄럭입니다. 맞바람 시 한 클럽 넉넉히 잡으세요.';
-    if (w <= 11) return '🧢 모자 조심! 탄도를 낮게 깔아치는(펀치샷)게 유리합니다.';
-    return '💨 공이 휠 정도로 바람이 셉니다. 안전에 유의하며 플레이하세요.';
+    if (w <= 5) return '🍃 살랑바람입니다. 평소 거리대로 편하게 치세요.';
+    if (w <= 8) return '🚩 깃발이 펄럭입니다. 맞바람 땐 두 클럽까지 더 보세요.';
+    if (w <= 11) return '🧢 모자 꽉 쓰세요! 낮게 깔아치는 펀치샷이 필수입니다.';
+    return '🌪 서 있기도 힘든 바람! 욕심버리고 생존 골프 하세요.';
   }
 
   static String _getRainAdvice(double r) {
-    if (r <= 0) return '☀️ 비 걱정 없는 맑은 하늘입니다.';
-    if (r <= 1) return '🌂 부슬비가 내립니다. 방수 모자와 여분 장갑을 챙기세요.';
-    if (r <= 4) return '🌧 옷이 젖을 수 있습니다. 우비를 입고 플레이하세요.';
-    if (r <= 9) return '☔️ 비가 꽤 옵니다. 그립이 미끄러우니 수건 필수!';
-    return '⛈ 라운딩이 어려울 수 있습니다. 골프장 휴장 여부를 확인하세요.';
+    if (r <= 0) return '☀️ 비 걱정 없는 쾌청한 하늘입니다.';
+    if (r <= 1) return '🌂 이슬비가 옵니다. 방수 모자와 수건을 꼭 챙기세요.';
+    if (r <= 4) return '🌧 옷이 젖는 비입니다. 우비 입고 여분 장갑 많이 챙기세요.';
+    if (r <= 9) return '☔️ 비가 꽤 옵니다. 그린이 느리니 퍼팅은 과감하게 때리세요!';
+    return '⛈ 라운딩이 불가능해 보입니다. 골프장에 휴장 여부 전화해보세요.';
   }
 
   static String _getTempAdvice(double sensible, double actual) {
-    if (sensible < 5) return '❄️ 체감온도 영하권! 핫팩, 귀마개, 넥워머 풀장착 필수.';
-    if (sensible > 30) return '🔥 찜통 더위입니다. 얼음물과 우산으로 열사병 대비하세요.';
-    if (sensible >= 15 && sensible <= 25) return '✨ 춥지도 덥지도 않은 축복받은 날씨입니다.';
-
-    // 바람 때문에 더 춥게 느껴질 때
-    if (sensible < actual - 3) return '🌬 바람 때문에 실제보다 훨씬 쌀쌀합니다. 겉옷 챙기세요.';
-
+    if (sensible < 0) return '❄️ 체감 영하! 핫팩, 귀마개, 넥워머 없으면 얼어 죽습니다.';
+    if (sensible < 8) return '🌬 많이 춥습니다. 얇은 옷을 여러 겹 껴입으세요 (Layering).';
+    if (sensible >= 8 && sensible < 15) return '🧥 쌀쌀합니다. 몸이 굳지 않게 스트레칭 필수!';
+    if (sensible >= 15 && sensible <= 25) return '✨ 춥지도 덥지도 않은 축복받은 기온입니다.';
+    if (sensible > 25 && sensible <= 30)
+      return '😅 땀이 좀 납니다. 얼음물 챙기시고 수분 섭취 자주 하세요.';
+    if (sensible > 30) return '🔥 찜통 더위! 우산으로 해 가리고 카트 그늘 이용하세요.';
     return '🌡 기온에 맞는 편안한 복장을 준비하세요.';
   }
 
   static String? _getFogAdvice(double h, double v) {
-    if (v < 200 || h >= 95) return '🌫 한 치 앞도 안 보입니다. 컬러볼 필수, 캐디 조언을 따르세요.';
-    if (h >= 85) return '🌫 안개가 낄 수 있습니다. 시야 확보에 유의하세요.';
+    if (v < 200 || h >= 95) return '🌫 한 치 앞도 안 보입니다(곰탕). 컬러볼 쓰시고 캐디 방향을 믿으세요.';
+    if (h >= 85) return '🌫 안개가 낄 수 있어요. 티샷 방향 설정에 신중하세요.';
     return null;
   }
 }

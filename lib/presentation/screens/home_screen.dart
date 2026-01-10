@@ -722,7 +722,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildDateTimeSelector() {
     final selectedDate = ref.watch(selectedDateProvider);
-    final selectedTime = ref.watch(selectedTimeProvider);
+    final selectedTimes = ref.watch(selectedTimesProvider);
+    final dateKey = selectedDate != null
+        ? '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}'
+        : null;
+    final selectedTime = dateKey != null ? selectedTimes[dateKey] : null;
 
     return Row(
       children: [
@@ -792,7 +796,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     );
                     if (picked != null) {
                       debugPrint('선택된 시간: $picked'); // 디버그용
-                      ref.read(selectedTimeProvider.notifier).state = picked;
+                      if (dateKey != null) {
+                        final newTimes = Map<String, TimeOfDay>.from(
+                          selectedTimes,
+                        );
+                        newTimes[dateKey] = picked;
+                        ref.read(selectedTimesProvider.notifier).state =
+                            newTimes;
+                      }
                     }
                   },
             icon: Icon(
@@ -836,7 +847,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: Icon(Icons.close, size: 20, color: AppColors.textMuted),
             onPressed: () {
               ref.read(selectedDateProvider.notifier).state = null;
-              ref.read(selectedTimeProvider.notifier).state = null;
+              if (dateKey != null) {
+                final newTimes = Map<String, TimeOfDay>.from(selectedTimes);
+                newTimes.remove(dateKey);
+                ref.read(selectedTimesProvider.notifier).state = newTimes;
+              }
             },
             constraints: const BoxConstraints(),
             padding: const EdgeInsets.all(8),

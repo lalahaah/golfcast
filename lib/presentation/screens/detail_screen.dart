@@ -132,8 +132,13 @@ class DetailScreen extends ConsumerWidget {
             // Content
             Expanded(
               child: weatherAsync.when(
-                data: (weather) =>
-                    _buildContent(context, weather, golfScore, selectedDate),
+                data: (weather) => _buildContent(
+                  context,
+                  ref,
+                  weather,
+                  golfScore,
+                  selectedDate,
+                ),
                 loading: () => const SkeletonLoader(),
                 error: (error, stack) => _buildError(context, ref, error),
               ),
@@ -215,6 +220,7 @@ class DetailScreen extends ConsumerWidget {
 
   Widget _buildContent(
     BuildContext context,
+    WidgetRef ref,
     WeatherData weather,
     GolfScore? golfScore,
     DateTime? selectedDate,
@@ -259,7 +265,15 @@ class DetailScreen extends ConsumerWidget {
 
     // 날짜 미선택 시 향후 24시간 예보 표시, 선택 시 해당 날짜 예보 표시
     final List<HourlyWeather> hourlyForDate;
+    // 선택한 날짜에 대한 시간 가져오기
+    final selectedTimes = ref.watch(selectedTimesProvider);
+    final dateKey = selectedDate != null
+        ? '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}'
+        : null;
+    final selectedTime = dateKey != null ? selectedTimes[dateKey] : null;
+
     if (selectedDate == null) {
+      // 날짜 미선택: 현재 시간 기준 향후 24시간
       final nowLimit = now.add(const Duration(hours: 24));
       hourlyForDate = weather.hourly
           .where(
@@ -269,7 +283,18 @@ class DetailScreen extends ConsumerWidget {
           )
           .toList();
     } else {
+      // 날짜 선택: 해당 날짜의 모든 시간별 예보 표시
       hourlyForDate = weather.getHourlyWeatherForDate(selectedDate);
+
+      // 디버그: hourlyForDate에 실제로 어떤 날짜들이 포함되어 있는지 확인
+      if (hourlyForDate.isNotEmpty) {
+        debugPrint(
+          '📅 선택한 날짜: ${selectedDate.year}-${selectedDate.month}-${selectedDate.day}',
+        );
+        debugPrint('📊 hourlyForDate 첫번째: ${hourlyForDate.first.time}');
+        debugPrint('📊 hourlyForDate 마지막: ${hourlyForDate.last.time}');
+        debugPrint('📊 총 ${hourlyForDate.length}개');
+      }
     }
 
     final dailyForDate = weather.getDailyWeatherForDate(selectedDate ?? today);
@@ -393,9 +418,28 @@ class DetailScreen extends ConsumerWidget {
                   final hourly = hourlyForDate[index];
                   final isNextDay = hourly.time.day != now.day;
                   final timeFormat = DateFormat(isNextDay ? 'd일 HH시' : 'HH:00');
-                  final isHighlighted =
-                      hourly.time.hour == now.hour &&
-                      hourly.time.day == now.day;
+
+                  // 선택한 시간이 있으면 그 시간을 하이라이트, 없으면 현재 시간을 하이라이트
+                  final bool isHighlighted;
+                  if (selectedTime != null && selectedDate != null) {
+                    final selectedDateTime = DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      selectedTime.hour,
+                      selectedTime.minute,
+                    );
+
+                    isHighlighted =
+                        hourly.time.year == selectedDateTime.year &&
+                        hourly.time.month == selectedDateTime.month &&
+                        hourly.time.day == selectedDateTime.day &&
+                        hourly.time.hour == selectedDateTime.hour;
+                  } else {
+                    isHighlighted =
+                        hourly.time.hour == now.hour &&
+                        hourly.time.day == now.day;
+                  }
 
                   return Container(
                     width: isNextDay ? 90 : 80,
@@ -506,7 +550,7 @@ class DetailScreen extends ConsumerWidget {
                 iconBgColor: Colors.orange[50]!,
                 label: '기온/체감',
                 value:
-                    '${weather.current.temperature.toStringAsFixed(0)}° / ${weather.current.feelsLike.toStringAsFixed(0)}°',
+                    '${golfScore?.temperature.toStringAsFixed(0) ?? weather.current.temperature.toStringAsFixed(0)}° / ${golfScore?.feelsLike.toStringAsFixed(0) ?? weather.current.feelsLike.toStringAsFixed(0)}°',
               ),
               _buildAnalysisCard(
                 icon: Icons.umbrella,
@@ -514,14 +558,18 @@ class DetailScreen extends ConsumerWidget {
                 iconBgColor: Colors.teal[50]!,
                 label: '강수/습도',
                 value:
-                    '${weather.current.rainAmount.toStringAsFixed(1)}mm / ${weather.current.humidity}%',
+                    '${golfScore?.rainAmount.toStringAsFixed(1) ?? weather.current.rainAmount.toStringAsFixed(1)}mm / ${golfScore?.humidity ?? weather.current.humidity}%',
               ),
               _buildAnalysisCard(
                 icon: Icons.wb_sunny_outlined,
                 iconColor: Colors.red[400]!,
                 iconBgColor: Colors.red[50]!,
                 label: '자외선',
-                value: weather.current.uvi?.toStringAsFixed(1) ?? '0.0',
+                value:
+                    (golfScore?.uvi ?? weather.current.uvi)?.toStringAsFixed(
+                      1,
+                    ) ??
+                    '0.0',
               ),
             ],
           ),

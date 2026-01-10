@@ -28,10 +28,12 @@ final selectedDateProvider = StateProvider.autoDispose<DateTime?>((ref) {
   return null;
 });
 
-// 시간 선택 Provider (기본값: null = 선택 안 함)
-final selectedTimeProvider = StateProvider.autoDispose<TimeOfDay?>((ref) {
-  return null;
-});
+// 날짜별 선택한 시간 (날짜 키: YYYY-MM-DD 형식)
+final selectedTimesProvider = StateProvider.autoDispose<Map<String, TimeOfDay>>(
+  (ref) {
+    return {};
+  },
+);
 
 // 날씨 데이터 Provider
 final weatherDataProvider = FutureProvider.autoDispose<WeatherData>((
@@ -47,11 +49,36 @@ final weatherDataProvider = FutureProvider.autoDispose<WeatherData>((
   return await useCase(golfCourse.lat, golfCourse.lon);
 });
 
+/// Helper: 정확한 시간 또는 가장 가까운 시간의 시간별 날씨 데이터 찾기
+HourlyWeather _findClosestHourlyWeather(
+  List<HourlyWeather> hourlyList,
+  int targetHour,
+) {
+  if (hourlyList.isEmpty) {
+    throw Exception('hourlyList is empty');
+  }
+
+  // 1. 정확한 시간 매칭 시도
+  final exactMatch = hourlyList.where((h) => h.time.hour == targetHour);
+  if (exactMatch.isNotEmpty) return exactMatch.first;
+
+  // 2. 가장 가까운 시간 찾기
+  return hourlyList.reduce((a, b) {
+    final aDiff = (a.time.hour - targetHour).abs();
+    final bDiff = (b.time.hour - targetHour).abs();
+    return aDiff < bDiff ? a : b;
+  });
+}
+
 // 골프 점수 계산 Provider
 final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
   final weatherAsync = ref.watch(weatherDataProvider);
   final selectedDate = ref.watch(selectedDateProvider);
-  final selectedTime = ref.watch(selectedTimeProvider);
+  final selectedTimes = ref.watch(selectedTimesProvider);
+  final dateKey = selectedDate != null
+      ? '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}'
+      : null;
+  final selectedTime = dateKey != null ? selectedTimes[dateKey] : null;
   final now = DateTime.now();
 
   return weatherAsync.when(
@@ -61,6 +88,7 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
       double temperature;
       double humidity;
       double visibility;
+      double? uvi;
 
       // 날짜를 선택하지 않았거나 오늘이면 현재 날씨 사용
       if (selectedDate == null) {
@@ -69,6 +97,7 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
         temperature = weather.current.temperature;
         humidity = weather.current.humidity.toDouble();
         visibility = weather.current.visibility;
+        uvi = weather.current.uvi;
       } else {
         // 날짜를 선택한 경우
         final isToday =
@@ -76,60 +105,43 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
             selectedDate.month == now.month &&
             selectedDate.day == now.day;
 
-        if (isToday) {
-          // 오늘인데 시간을 선택한 경우, 해당 시간대 예보 사용
-          if (selectedTime != null) {
-            final hourlyForToday = weather.getHourlyWeatherForDate(
-              selectedDate,
-            );
-            // firstWhere orElse에서 타입 에러 방지를 위해 수동 체크
-            final match = hourlyForToday.where(
-              (h) => h.time.hour >= selectedTime.hour,
-            );
-            final targetHourWeather = match.isNotEmpty
-                ? match.first
-                : weather.current;
-
-            windSpeed = targetHourWeather.windSpeed;
-            rainAmount = targetHourWeather.rainAmount;
-            temperature = targetHourWeather.temperature;
-            humidity = targetHourWeather.humidity.toDouble();
-            visibility = targetHourWeather.visibility;
-          } else {
-            // 오늘이지만 시간 미선택 시 현재 날씨
-            windSpeed = weather.current.windSpeed;
-            rainAmount = weather.current.rainAmount;
-            temperature = weather.current.temperature;
-            humidity = weather.current.humidity.toDouble();
-            visibility = weather.current.visibility;
-          }
+        if (isToday && selectedTime == null) {
+          // 오늘이지만 시간 미선택 → 현재 날씨
+          windSpeed = weather.current.windSpeed;
+          rainAmount = weather.current.rainAmount;
+          temperature = weather.current.temperature;
+          humidity = weather.current.humidity.toDouble();
+          visibility = weather.current.visibility;
+          uvi = weather.current.uvi;
         } else {
-          // 미래 날짜이면 기획된 알고리즘에 따라 데이터 선택
+          // 오늘+시간선택 또는 미래날짜
           final hourlyForDate = weather.getHourlyWeatherForDate(selectedDate);
 
           if (hourlyForDate.isNotEmpty) {
-            // 48시간 이내: 선택한 시간 또는 티오프 피크 시간(오전 10시) 데이터 사용
-            final targetHour = selectedTime?.hour ?? 10;
-            final match = hourlyForDate.where((h) => h.time.hour >= targetHour);
-            final peakHourWeather = match.isNotEmpty
-                ? match.first
-                : hourlyForDate.first;
+            // 48시간 이내: 정확한 시간 또는 가장 가까운 시간 사용
+            final targetHour = selectedTime?.hour ?? 10; // 기본값: 오전 10시
+            final targetWeather = _findClosestHourlyWeather(
+              hourlyForDate,
+              targetHour,
+            );
 
-            windSpeed = peakHourWeather.windSpeed;
-            rainAmount = peakHourWeather.rainAmount;
-            temperature = peakHourWeather.temperature;
-            humidity = peakHourWeather.humidity.toDouble();
-            visibility = peakHourWeather.visibility;
+            windSpeed = targetWeather.windSpeed;
+            rainAmount = targetWeather.rainAmount;
+            temperature = targetWeather.temperature;
+            humidity = targetWeather.humidity.toDouble();
+            visibility = targetWeather.visibility;
+            uvi = targetWeather.uvi;
           } else {
             // 48시간 이후: 일별 요약 데이터 사용
             final daily = weather.getDailyWeatherForDate(selectedDate);
             if (daily != null) {
               windSpeed = daily.windSpeed;
               rainAmount = daily.rainAmount;
-              // 일별은 최고 기온을 기준으로 보수적 판단
-              temperature = daily.maxTemp;
+              // 일별은 평균 기온 사용 (최저+최고)/2
+              temperature = (daily.minTemp + daily.maxTemp) / 2;
               humidity = 50.0; // 일별 요약에는 습도가 없으므로 기본값
               visibility = 10000.0; // 기본값
+              uvi = null; // 일별 데이터에는 UVI가 없음
             } else {
               return null;
             }
@@ -156,6 +168,11 @@ final golfScoreProvider = Provider.autoDispose<GolfScore?>((ref) {
         windSpeed: windSpeed,
         rainAmount: rainAmount,
         temperature: temperature,
+        // **[복구 및 수정]** 상세 분석용 데이터 직접 할당
+        // 체감온도 계산 (V2.2 로직과 일치: temp - (wind * 0.7))
+        feelsLike: temperature - (windSpeed * 0.7),
+        humidity: humidity.toInt(),
+        uvi: uvi,
       );
     },
     loading: () => null,
