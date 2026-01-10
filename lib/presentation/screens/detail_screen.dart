@@ -448,12 +448,21 @@ class DetailScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // 상세 분석 (4-Factor Grid)
-          Text(
-            '상세 분석',
-            style: TextStyles.body1().copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.textStrong,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '상세 분석',
+                style: TextStyles.body1().copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textStrong,
+                ),
+              ),
+              Text(
+                'OpenWeatherMap 제공',
+                style: TextStyles.caption(color: AppColors.brandGreen),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           GridView.count(
@@ -468,7 +477,7 @@ class DetailScreen extends ConsumerWidget {
                 icon: Icons.air,
                 iconColor: Colors.blue[500]!,
                 iconBgColor: Colors.blue[50]!,
-                label: '바람 (최대)',
+                label: '바람',
                 value:
                     '${golfScore?.windSpeed.toStringAsFixed(1) ?? '0.0'} m/s',
               ),
@@ -476,26 +485,24 @@ class DetailScreen extends ConsumerWidget {
                 icon: Icons.thermostat,
                 iconColor: Colors.orange[500]!,
                 iconBgColor: Colors.orange[50]!,
-                label: '기온',
-                value: '${golfScore?.temperature.toStringAsFixed(0) ?? '0'}°',
+                label: '기온/체감',
+                value:
+                    '${weather.current.temperature.toStringAsFixed(0)}° / ${weather.current.feelsLike.toStringAsFixed(0)}°',
               ),
               _buildAnalysisCard(
-                icon: Icons.grain,
+                icon: Icons.umbrella,
                 iconColor: Colors.teal[500]!,
                 iconBgColor: Colors.teal[50]!,
-                label: '미세먼지(PM10)',
-                value: weather.current.pm10 != null
-                    ? weather.current.pm10!.toStringAsFixed(0)
-                    : '데이터 없음',
+                label: '강수/습도',
+                value:
+                    '${weather.current.rainAmount.toStringAsFixed(1)}mm / ${weather.current.humidity}%',
               ),
               _buildAnalysisCard(
-                icon: Icons.blur_on,
-                iconColor: Colors.indigo[500]!,
-                iconBgColor: Colors.indigo[50]!,
-                label: '초미세먼지(PM2.5)',
-                value: weather.current.pm2_5 != null
-                    ? weather.current.pm2_5!.toStringAsFixed(0)
-                    : '데이터 없음',
+                icon: Icons.wb_sunny_outlined,
+                iconColor: Colors.red[400]!,
+                iconBgColor: Colors.red[50]!,
+                label: '자외선',
+                value: weather.current.uvi?.toStringAsFixed(1) ?? '0.0',
               ),
             ],
           ),

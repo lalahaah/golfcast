@@ -4,27 +4,21 @@
         "name_kr": "레이크사이드 CC",
         "name_en": "Lakeside Country Club",
         "aliases": [
-            "Lake Side",
             "레이크",
-            "레이크사이드",
-            "삼성",
-            "용인 레이크"
+            "삼성"
         ],
         "region_depth1": "경기",
         "region_depth2": "용인",
         "location": {
             "lat": 37.3275,
             "lon": 127.2023
-        },
-        "course_type": "Public 54H"
+        }
     },
     {
         "id": "gc_002",
         "name_kr": "88 CC",
         "name_en": "88 Country Club",
         "aliases": [
-            "88",
-            "88컨트리",
             "팔팔"
         ],
         "region_depth1": "경기",
@@ -32,13 +26,12 @@
         "location": {
             "lat": 37.2845,
             "lon": 127.1567
-        },
-        "course_type": "Membership 54H"
+        }
     },
     {
         "id": "gc_003",
         "name_kr": "가평 베네스트 GC",
-        "name_en": "",
+        "name_en": "Gapyeong Benest",
         "aliases": [
             "가베"
         ],
@@ -47,30 +40,27 @@
         "location": {
             "lat": 37.8967,
             "lon": 127.4243
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_004",
         "name_kr": "스카이72 GC",
-        "name_en": "",
+        "name_en": "Sky72 GC",
         "aliases": [
             "스카이",
-            "하늘",
-            "바다"
+            "클럽72"
         ],
         "region_depth1": "인천",
         "region_depth2": "중구",
         "location": {
             "lat": 37.4578,
             "lon": 126.4132
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_005",
         "name_kr": "뉴서울 CC",
-        "name_en": "",
+        "name_en": "New Seoul CC",
         "aliases": [
             "뉴서울"
         ],
@@ -79,13 +69,12 @@
         "location": {
             "lat": 37.3612,
             "lon": 127.2345
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_006",
         "name_kr": "안성 베네스트 GC",
-        "name_en": "",
+        "name_en": "Anseong Benest",
         "aliases": [
             "안베"
         ],
@@ -94,13 +83,12 @@
         "location": {
             "lat": 37.0567,
             "lon": 127.3123
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_007",
         "name_kr": "블랙스톤 이천",
-        "name_en": "",
+        "name_en": "Blackstone Icheon",
         "aliases": [
             "블랙스톤"
         ],
@@ -109,13 +97,12 @@
         "location": {
             "lat": 37.189,
             "lon": 127.489
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_008",
         "name_kr": "태광 CC",
-        "name_en": "",
+        "name_en": "Taekwang CC",
         "aliases": [
             "태광"
         ],
@@ -124,13 +111,12 @@
         "location": {
             "lat": 37.2678,
             "lon": 127.0989
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_009",
         "name_kr": "서원힐스 CC",
-        "name_en": "",
+        "name_en": "Seowon Hills",
         "aliases": [
             "서원힐스"
         ],
@@ -139,13 +125,12 @@
         "location": {
             "lat": 37.8567,
             "lon": 126.8234
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_010",
         "name_kr": "라비에벨 CC",
-        "name_en": "",
+        "name_en": "La Vie est Belle",
         "aliases": [
             "라비에벨"
         ],
@@ -154,13 +139,12 @@
         "location": {
             "lat": 37.789,
             "lon": 127.8123
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_011",
         "name_kr": "태릉 CC",
-        "name_en": "",
+        "name_en": "Taereung CC",
         "aliases": [
             "태릉"
         ],
@@ -169,13 +153,12 @@
         "location": {
             "lat": 37.6433,
             "lon": 127.1123
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_012",
         "name_kr": "기흥 CC",
-        "name_en": "",
+        "name_en": "Kiheung CC",
         "aliases": [
             "기흥"
         ],
@@ -184,13 +167,12 @@
         "location": {
             "lat": 37.2134,
             "lon": 127.1234
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_013",
         "name_kr": "골드 CC",
-        "name_en": "",
+        "name_en": "Gold CC",
         "aliases": [
             "골드"
         ],
@@ -199,13 +181,12 @@
         "location": {
             "lat": 37.2245,
             "lon": 127.1123
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_014",
         "name_kr": "코리아 CC",
-        "name_en": "",
+        "name_en": "Korea CC",
         "aliases": [
             "코리아"
         ],
@@ -214,13 +195,12 @@
         "location": {
             "lat": 37.2289,
             "lon": 127.1156
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_015",
         "name_kr": "남촌 CC",
-        "name_en": "",
+        "name_en": "Namchon CC",
         "aliases": [
             "남촌"
         ],
@@ -229,13 +209,12 @@
         "location": {
             "lat": 37.3345,
             "lon": 127.289
-        },
-        "course_type": ""
+        }
     },
     {
         "id": "gc_016",
         "name_kr": "화산 CC",
-        "name_en": "",
+        "name_en": "Hwasan CC",
         "aliases": [
             "화산"
         ],
@@ -244,13 +223,12 @@
         "location": {
             "lat": 37.189,
             "lon": 127.2123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_017",
+        "id": "gc_17",
         "name_kr": "아시아나 CC",
-        "name_en": "",
+        "name_en": "Asiana CC",
         "aliases": [
             "아시아나"
         ],
@@ -259,13 +237,12 @@
         "location": {
             "lat": 37.2123,
             "lon": 127.2567
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_018",
+        "id": "gc_18",
         "name_kr": "한성 CC",
-        "name_en": "",
+        "name_en": "Hansung CC",
         "aliases": [
             "한성"
         ],
@@ -274,13 +251,12 @@
         "location": {
             "lat": 37.2989,
             "lon": 127.1123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_019",
+        "id": "gc_19",
         "name_kr": "수원 CC",
-        "name_en": "",
+        "name_en": "Suwon CC",
         "aliases": [
             "수원"
         ],
@@ -289,13 +265,12 @@
         "location": {
             "lat": 37.2789,
             "lon": 127.1234
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_020",
+        "id": "gc_20",
         "name_kr": "플라자 CC 용인",
-        "name_en": "",
+        "name_en": "Plaza CC Yongin",
         "aliases": [
             "플라자"
         ],
@@ -304,29 +279,26 @@
         "location": {
             "lat": 37.1567,
             "lon": 127.1989
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_021",
+        "id": "gc_21",
         "name_kr": "해슬리 나인브릿지",
-        "name_en": "",
+        "name_en": "Haesley Nine Bridges",
         "aliases": [
-            "해슬리",
-            "나인브릿지"
+            "해슬리"
         ],
         "region_depth1": "경기",
         "region_depth2": "여주",
         "location": {
             "lat": 37.1983,
             "lon": 127.3211
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_022",
+        "id": "gc_22",
         "name_kr": "자유 CC",
-        "name_en": "",
+        "name_en": "Jayu CC",
         "aliases": [
             "자유"
         ],
@@ -335,13 +307,12 @@
         "location": {
             "lat": 37.2567,
             "lon": 127.589
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_023",
+        "id": "gc_23",
         "name_kr": "신라 CC",
-        "name_en": "",
+        "name_en": "Shilla CC",
         "aliases": [
             "신라"
         ],
@@ -350,13 +321,12 @@
         "location": {
             "lat": 37.389,
             "lon": 127.5123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_024",
+        "id": "gc_24",
         "name_kr": "블루헤런 GC",
-        "name_en": "",
+        "name_en": "Blue Heron GC",
         "aliases": [
             "블루헤런"
         ],
@@ -365,13 +335,12 @@
         "location": {
             "lat": 37.4123,
             "lon": 127.5567
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_025",
-        "name_kr": "사우스스프링스 CC",
-        "name_en": "",
+        "id": "gc_25",
+        "name_kr": "사우스스프링스",
+        "name_en": "South Springs",
         "aliases": [
             "사우스스프링스"
         ],
@@ -380,13 +349,12 @@
         "location": {
             "lat": 37.1678,
             "lon": 127.4234
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_026",
+        "id": "gc_26",
         "name_kr": "비에이비스타 CC",
-        "name_en": "",
+        "name_en": "BA Vista CC",
         "aliases": [
             "비에이"
         ],
@@ -395,13 +363,12 @@
         "location": {
             "lat": 37.1234,
             "lon": 127.4567
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_027",
+        "id": "gc_27",
         "name_kr": "써닝포인트 CC",
-        "name_en": "",
+        "name_en": "Sunning Point",
         "aliases": [
             "써닝포인트"
         ],
@@ -410,13 +377,12 @@
         "location": {
             "lat": 37.1456,
             "lon": 127.389
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_028",
+        "id": "gc_28",
         "name_kr": "에덴블루 CC",
-        "name_en": "",
+        "name_en": "Eden Blue CC",
         "aliases": [
             "에덴블루"
         ],
@@ -425,13 +391,12 @@
         "location": {
             "lat": 37.089,
             "lon": 127.289
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_029",
+        "id": "gc_29",
         "name_kr": "마에스트로 CC",
-        "name_en": "",
+        "name_en": "Maestro CC",
         "aliases": [
             "마에스트로"
         ],
@@ -440,13 +405,12 @@
         "location": {
             "lat": 37.0456,
             "lon": 127.2123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_030",
+        "id": "gc_30",
         "name_kr": "송추 CC",
-        "name_en": "",
+        "name_en": "Songchu CC",
         "aliases": [
             "송추"
         ],
@@ -455,13 +419,12 @@
         "location": {
             "lat": 37.7234,
             "lon": 126.9567
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_031",
+        "id": "gc_31",
         "name_kr": "서원밸리 CC",
-        "name_en": "",
+        "name_en": "Seowon Valley",
         "aliases": [
             "서원밸리"
         ],
@@ -470,13 +433,12 @@
         "location": {
             "lat": 37.8456,
             "lon": 126.8123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_032",
+        "id": "gc_32",
         "name_kr": "스마트시티 GC",
-        "name_en": "",
+        "name_en": "Smart City GC",
         "aliases": [
             "스마트시티"
         ],
@@ -485,13 +447,12 @@
         "location": {
             "lat": 37.789,
             "lon": 126.789
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_033",
+        "id": "gc_33",
         "name_kr": "타이거 CC",
-        "name_en": "",
+        "name_en": "Tiger CC",
         "aliases": [
             "타이거"
         ],
@@ -500,13 +461,12 @@
         "location": {
             "lat": 37.9123,
             "lon": 126.889
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_034",
+        "id": "gc_34",
         "name_kr": "몽베르 CC",
-        "name_en": "",
+        "name_en": "Montvert CC",
         "aliases": [
             "몽베르"
         ],
@@ -515,28 +475,26 @@
         "location": {
             "lat": 38.1234,
             "lon": 127.3456
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_035",
-        "name_kr": "베어즈크리크 GC",
-        "name_en": "",
+        "id": "gc_35",
+        "name_kr": "베어즈크리크",
+        "name_en": "Bears Creek",
         "aliases": [
-            "베어즈크리크"
+            "베어즈"
         ],
         "region_depth1": "경기",
         "region_depth2": "포천",
         "location": {
             "lat": 37.9567,
             "lon": 127.289
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_036",
+        "id": "gc_36",
         "name_kr": "남성대 CC",
-        "name_en": "",
+        "name_en": "Namseongdae CC",
         "aliases": [
             "남성대"
         ],
@@ -545,13 +503,12 @@
         "location": {
             "lat": 37.4789,
             "lon": 127.1356
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_037",
+        "id": "gc_37",
         "name_kr": "드림파크 CC",
-        "name_en": "",
+        "name_en": "Dream Park CC",
         "aliases": [
             "드림파크"
         ],
@@ -560,29 +517,26 @@
         "location": {
             "lat": 37.5689,
             "lon": 126.6543
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_038",
+        "id": "gc_38",
         "name_kr": "레이크우드 CC",
-        "name_en": "Lakewood Country Club",
+        "name_en": "Lakewood CC",
         "aliases": [
-            "Lakewood",
-            "레이크우드"
+            "레이크우드를"
         ],
         "region_depth1": "경기",
         "region_depth2": "양주",
         "location": {
             "lat": 37.8123,
             "lon": 127.089
-        },
-        "course_type": "Public 36H"
+        }
     },
     {
-        "id": "gc_039",
+        "id": "gc_39",
         "name_kr": "서서울 CC",
-        "name_en": "",
+        "name_en": "Seoseoul CC",
         "aliases": [
             "서서울"
         ],
@@ -591,13 +545,12 @@
         "location": {
             "lat": 37.6989,
             "lon": 126.8567
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_040",
-        "name_kr": "아난티 코드 GC",
-        "name_en": "",
+        "id": "gc_40",
+        "name_kr": "아난티 코드",
+        "name_en": "Ananti Chord",
         "aliases": [
             "아난티"
         ],
@@ -606,13 +559,12 @@
         "location": {
             "lat": 37.7567,
             "lon": 127.5123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_041",
+        "id": "gc_41",
         "name_kr": "잭니클라우스 GC",
-        "name_en": "",
+        "name_en": "Jack Nicklaus GC",
         "aliases": [
             "잭니클라우스"
         ],
@@ -621,13 +573,12 @@
         "location": {
             "lat": 37.389,
             "lon": 126.6123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_042",
+        "id": "gc_42",
         "name_kr": "오렌지듄스 GC",
-        "name_en": "",
+        "name_en": "Orange Dunes GC",
         "aliases": [
             "오렌지듄스"
         ],
@@ -636,13 +587,12 @@
         "location": {
             "lat": 37.3678,
             "lon": 126.6234
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_043",
+        "id": "gc_43",
         "name_kr": "웰링턴 CC",
-        "name_en": "",
+        "name_en": "Wellington CC",
         "aliases": [
             "웰링턴"
         ],
@@ -651,13 +601,12 @@
         "location": {
             "lat": 37.2123,
             "lon": 127.4123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_044",
+        "id": "gc_44",
         "name_kr": "렉스필드 CC",
-        "name_en": "",
+        "name_en": "Rexfield CC",
         "aliases": [
             "렉스필드"
         ],
@@ -666,13 +615,12 @@
         "location": {
             "lat": 37.3123,
             "lon": 127.4234
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_045",
+        "id": "gc_45",
         "name_kr": "이스트밸리 CC",
-        "name_en": "",
+        "name_en": "East Valley CC",
         "aliases": [
             "이스트밸리"
         ],
@@ -681,13 +629,12 @@
         "location": {
             "lat": 37.3456,
             "lon": 127.3123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_046",
+        "id": "gc_46",
         "name_kr": "캐슬파인 GC",
-        "name_en": "",
+        "name_en": "Castle Pine GC",
         "aliases": [
             "캐슬파인"
         ],
@@ -696,13 +643,12 @@
         "location": {
             "lat": 37.3234,
             "lon": 127.5123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_047",
+        "id": "gc_47",
         "name_kr": "중부 CC",
-        "name_en": "",
+        "name_en": "Jungbu CC",
         "aliases": [
             "중부"
         ],
@@ -711,13 +657,12 @@
         "location": {
             "lat": 37.3123,
             "lon": 127.2567
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_048",
+        "id": "gc_48",
         "name_kr": "그린힐 CC",
-        "name_en": "",
+        "name_en": "Green Hill CC",
         "aliases": [
             "그린힐"
         ],
@@ -726,13 +671,12 @@
         "location": {
             "lat": 37.289,
             "lon": 127.289
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_049",
+        "id": "gc_49",
         "name_kr": "광릉 CC",
-        "name_en": "",
+        "name_en": "Gwangneung CC",
         "aliases": [
             "광릉"
         ],
@@ -741,13 +685,12 @@
         "location": {
             "lat": 37.7456,
             "lon": 127.2123
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_050",
+        "id": "gc_50",
         "name_kr": "양주 CC",
-        "name_en": "",
+        "name_en": "Yangju CC",
         "aliases": [
             "양주"
         ],
@@ -756,125 +699,706 @@
         "location": {
             "lat": 37.6123,
             "lon": 127.3234
-        },
-        "course_type": ""
+        }
     },
     {
-        "id": "gc_051",
-        "name_kr": "스카이72 골프클럽",
-        "name_en": "Sky72 Golf Club",
+        "id": "gc_51",
+        "name_kr": "엘리시안 강촌",
+        "name_en": "Elysian Gangchon",
         "aliases": [
-            "스카이72",
-            "하늘코스",
-            "Sky 72"
+            "엘리시안"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "춘천",
+        "location": {
+            "lat": 37.8123,
+            "lon": 127.589
+        }
+    },
+    {
+        "id": "gc_52",
+        "name_kr": "제이드팰리스",
+        "name_en": "Jade Palace",
+        "aliases": [
+            "제이드"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "춘천",
+        "location": {
+            "lat": 37.8345,
+            "lon": 127.5345
+        }
+    },
+    {
+        "id": "gc_53",
+        "name_kr": "휘슬링락 CC",
+        "name_en": "Whistling Rock CC",
+        "aliases": [
+            "휘슬링락"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "춘천",
+        "location": {
+            "lat": 37.7567,
+            "lon": 127.6789
+        }
+    },
+    {
+        "id": "gc_54",
+        "name_kr": "파가니카 CC",
+        "name_en": "Paganica CC",
+        "aliases": [
+            "파가니카"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "춘천",
+        "location": {
+            "lat": 37.7234,
+            "lon": 127.6123
+        }
+    },
+    {
+        "id": "gc_55",
+        "name_kr": "로드힐스 CC",
+        "name_en": "Road Hills CC",
+        "aliases": [
+            "로드힐스"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "춘천",
+        "location": {
+            "lat": 37.7456,
+            "lon": 127.6543
+        }
+    },
+    {
+        "id": "gc_56",
+        "name_kr": "클럽모우 CC",
+        "name_en": "Club Mow CC",
+        "aliases": [
+            "클럽모우"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "홍천",
+        "location": {
+            "lat": 37.689,
+            "lon": 127.6345
+        }
+    },
+    {
+        "id": "gc_57",
+        "name_kr": "샤인데일 CC",
+        "name_en": "Shinedale CC",
+        "aliases": [
+            "샤인데일"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "홍천",
+        "location": {
+            "lat": 37.6567,
+            "lon": 127.589
+        }
+    },
+    {
+        "id": "gc_58",
+        "name_kr": "오크밸리 CC",
+        "name_en": "Oak Valley CC",
+        "aliases": [
+            "오크밸리"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "원주",
+        "location": {
+            "lat": 37.4123,
+            "lon": 127.8123
+        }
+    },
+    {
+        "id": "gc_59",
+        "name_kr": "오크힐스 CC",
+        "name_en": "Oak Hills CC",
+        "aliases": [
+            "오크힐스"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "원주",
+        "location": {
+            "lat": 37.4234,
+            "lon": 127.8234
+        }
+    },
+    {
+        "id": "gc_60",
+        "name_kr": "성문안 CC",
+        "name_en": "Seongmunan CC",
+        "aliases": [
+            "성문안"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "원주",
+        "location": {
+            "lat": 37.4345,
+            "lon": 127.8345
+        }
+    },
+    {
+        "id": "gc_61",
+        "name_kr": "센추리21 CC",
+        "name_en": "Century 21 CC",
+        "aliases": [
+            "센추리21"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "원주",
+        "location": {
+            "lat": 37.289,
+            "lon": 127.8567
+        }
+    },
+    {
+        "id": "gc_62",
+        "name_kr": "웰리힐리 CC",
+        "name_en": "Welli Hilli CC",
+        "aliases": [
+            "웰리힐리"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "횡성",
+        "location": {
+            "lat": 37.489,
+            "lon": 128.2345
+        }
+    },
+    {
+        "id": "gc_63",
+        "name_kr": "휘닉스 평창",
+        "name_en": "Phoenix Pyeongchang",
+        "aliases": [
+            "휘팍"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "평창",
+        "location": {
+            "lat": 37.5789,
+            "lon": 128.3456
+        }
+    },
+    {
+        "id": "gc_64",
+        "name_kr": "알펜시아 700",
+        "name_en": "Alpensia 700",
+        "aliases": [
+            "알펜시아"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "평창",
+        "location": {
+            "lat": 37.6543,
+            "lon": 128.6789
+        }
+    },
+    {
+        "id": "gc_65",
+        "name_kr": "용평 GC",
+        "name_en": "Yongpyong GC",
+        "aliases": [
+            "용평"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "평창",
+        "location": {
+            "lat": 37.6432,
+            "lon": 128.689
+        }
+    },
+    {
+        "id": "gc_66",
+        "name_kr": "델피노 CC",
+        "name_en": "Delpino CC",
+        "aliases": [
+            "델피노"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "고성",
+        "location": {
+            "lat": 38.2123,
+            "lon": 128.489
+        }
+    },
+    {
+        "id": "gc_67",
+        "name_kr": "파인리즈 CC",
+        "name_en": "Pine Ridge CC",
+        "aliases": [
+            "파인리즈"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "고성",
+        "location": {
+            "lat": 38.2345,
+            "lon": 128.5123
+        }
+    },
+    {
+        "id": "gc_68",
+        "name_kr": "설악플라자",
+        "name_en": "Seorak Plaza",
+        "aliases": [
+            "설악프라자"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "속초",
+        "location": {
+            "lat": 38.189,
+            "lon": 128.5345
+        }
+    },
+    {
+        "id": "gc_69",
+        "name_kr": "설해원(골든비치)",
+        "name_en": "Seolhaewon",
+        "aliases": [
+            "설해원"
+        ],
+        "region_depth1": "강원",
+        "region_depth2": "양양",
+        "location": {
+            "lat": 38.0789,
+            "lon": 128.6543
+        }
+    },
+    {
+        "id": "gc_70",
+        "name_kr": "레인보우힐스",
+        "name_en": "Rainbow Hills",
+        "aliases": [
+            "레인보우"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "음성",
+        "location": {
+            "lat": 37.0123,
+            "lon": 127.6123
+        }
+    },
+    {
+        "id": "gc_71",
+        "name_kr": "젠스필드 CC",
+        "name_en": "Zensfield CC",
+        "aliases": [
+            "젠스필드"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "음성",
+        "location": {
+            "lat": 36.989,
+            "lon": 127.5678
+        }
+    },
+    {
+        "id": "gc_72",
+        "name_kr": "임페리얼레이크",
+        "name_en": "Imperial Lake",
+        "aliases": [
+            "임페리얼"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "충주",
+        "location": {
+            "lat": 37.0345,
+            "lon": 127.8456
+        }
+    },
+    {
+        "id": "gc_73",
+        "name_kr": "킹스데일 GC",
+        "name_en": "Kingsdale GC",
+        "aliases": [
+            "킹스데일"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "충주",
+        "location": {
+            "lat": 37.0567,
+            "lon": 127.8123
+        }
+    },
+    {
+        "id": "gc_74",
+        "name_kr": "동촌 GC",
+        "name_en": "Dongchon GC",
+        "aliases": [
+            "동촌"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "충주",
+        "location": {
+            "lat": 37.0789,
+            "lon": 127.8678
+        }
+    },
+    {
+        "id": "gc_75",
+        "name_kr": "대영베이스",
+        "name_en": "Daeyeong Base",
+        "aliases": [
+            "대영베이스"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "충주",
+        "location": {
+            "lat": 37.0234,
+            "lon": 127.789
+        }
+    },
+    {
+        "id": "gc_76",
+        "name_kr": "대영힐스",
+        "name_en": "Daeyeong Hills",
+        "aliases": [
+            "대영힐스"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "충주",
+        "location": {
+            "lat": 37.0123,
+            "lon": 127.7789
+        }
+    },
+    {
+        "id": "gc_77",
+        "name_kr": "로얄포레 CC",
+        "name_en": "Royal Foret CC",
+        "aliases": [
+            "로얄포레"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "충주",
+        "location": {
+            "lat": 37.1234,
+            "lon": 127.7345
+        }
+    },
+    {
+        "id": "gc_78",
+        "name_kr": "서산수 CC",
+        "name_en": "Seosansu CC",
+        "aliases": [
+            "서산수"
+        ],
+        "region_depth1": "충남",
+        "region_depth2": "서산",
+        "location": {
+            "lat": 36.8901,
+            "lon": 126.4567
+        }
+    },
+    {
+        "id": "gc_79",
+        "name_kr": "골든베이 GC",
+        "name_en": "Golden Bay GC",
+        "aliases": [
+            "골든베이"
+        ],
+        "region_depth1": "충남",
+        "region_depth2": "태안",
+        "location": {
+            "lat": 36.7234,
+            "lon": 126.2345
+        }
+    },
+    {
+        "id": "gc_80",
+        "name_kr": "우정힐스 CC",
+        "name_en": "Woo Jeong Hills CC",
+        "aliases": [
+            "우정힐스"
+        ],
+        "region_depth1": "충남",
+        "region_depth2": "천안",
+        "location": {
+            "lat": 36.789,
+            "lon": 127.2345
+        }
+    },
+    {
+        "id": "gc_81",
+        "name_kr": "천룡 CC",
+        "name_en": "Cheonryong CC",
+        "aliases": [
+            "천룡"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "진천",
+        "location": {
+            "lat": 36.9345,
+            "lon": 127.3456
+        }
+    },
+    {
+        "id": "gc_82",
+        "name_kr": "크리스탈카운티",
+        "name_en": "Crystal County",
+        "aliases": [
+            "크리스탈카운티"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "청주",
+        "location": {
+            "lat": 36.8123,
+            "lon": 127.5678
+        }
+    },
+    {
+        "id": "gc_83",
+        "name_kr": "떼제베 CC",
+        "name_en": "TGV CC",
+        "aliases": [
+            "떼제베"
+        ],
+        "region_depth1": "충북",
+        "region_depth2": "청주",
+        "location": {
+            "lat": 36.6789,
+            "lon": 127.3456
+        }
+    },
+    {
+        "id": "gc_84",
+        "name_kr": "세종필드 GC",
+        "name_en": "Sejong Field GC",
+        "aliases": [
+            "세종필드"
+        ],
+        "region_depth1": "세종",
+        "region_depth2": "",
+        "location": {
+            "lat": 36.5678,
+            "lon": 127.2678
+        }
+    },
+    {
+        "id": "gc_85",
+        "name_kr": "베어즈베스트 청라",
+        "name_en": "Bears Best Cheongna",
+        "aliases": [
+            "청라베어즈"
         ],
         "region_depth1": "인천",
-        "region_depth2": "중구",
+        "region_depth2": "서구",
         "location": {
-            "lat": 37.4539,
-            "lon": 126.4407
-        },
-        "course_type": "Public 72H"
+            "lat": 37.5345,
+            "lon": 126.6345
+        }
     },
     {
-        "id": "gc_052",
-        "name_kr": "남서울 CC",
-        "name_en": "Nam Seoul Country Club",
+        "id": "gc_86",
+        "name_kr": "인천 그랜드 CC",
+        "name_en": "Incheon Grand CC",
         "aliases": [
-            "남서울",
-            "남서울컨트리",
-            "Nam Seoul"
+            "인천그랜드"
+        ],
+        "region_depth1": "인천",
+        "region_depth2": "서구",
+        "location": {
+            "lat": 37.5567,
+            "lon": 126.6456
+        }
+    },
+    {
+        "id": "gc_87",
+        "name_kr": "아일랜드 CC",
+        "name_en": "Island CC",
+        "aliases": [
+            "아일랜드"
         ],
         "region_depth1": "경기",
-        "region_depth2": "성남",
+        "region_depth2": "안산",
         "location": {
-            "lat": 37.3826,
-            "lon": 127.084
-        },
-        "course_type": "Membership 27H"
+            "lat": 37.2345,
+            "lon": 126.5678
+        }
     },
     {
-        "id": "gc_053",
-        "name_kr": "안양 CC",
-        "name_en": "Anyang Country Club",
+        "id": "gc_88",
+        "name_kr": "지산 CC",
+        "name_en": "Jisan CC",
         "aliases": [
-            "안양",
-            "안양컨트리",
-            "Anyang"
-        ],
-        "region_depth1": "경기",
-        "region_depth2": "안양",
-        "location": {
-            "lat": 37.3609,
-            "lon": 126.9219
-        },
-        "course_type": "Membership 36H"
-    },
-    {
-        "id": "gc_054",
-        "name_kr": "썬힐 CC",
-        "name_en": "Sun Hill Country Club",
-        "aliases": [
-            "썬힐",
-            "선힐",
-            "Sun Hill"
-        ],
-        "region_depth1": "경기",
-        "region_depth2": "화성",
-        "location": {
-            "lat": 37.1389,
-            "lon": 126.9847
-        },
-        "course_type": "Public 27H"
-    },
-    {
-        "id": "gc_055",
-        "name_kr": "가평 베네스트 골프클럽",
-        "name_en": "Gapyeong Benest Golf Club",
-        "aliases": [
-            "가평베네스트",
-            "베네스트",
-            "Benest"
-        ],
-        "region_depth1": "경기",
-        "region_depth2": "가평",
-        "location": {
-            "lat": 37.7447,
-            "lon": 127.5422
-        },
-        "course_type": "Public 27H"
-    },
-    {
-        "id": "gc_056",
-        "name_kr": "블루원 용인",
-        "name_en": "Blue One Yongin",
-        "aliases": [
-            "블루원",
-            "용인블루원",
-            "Blue One"
+            "지산"
         ],
         "region_depth1": "경기",
         "region_depth2": "용인",
         "location": {
-            "lat": 37.2322,
-            "lon": 127.1942
-        },
-        "course_type": "Public 36H"
+            "lat": 37.2123,
+            "lon": 127.3123
+        }
     },
     {
-        "id": "gc_057",
-        "name_kr": "파인밸리 CC",
-        "name_en": "Pine Valley Country Club",
+        "id": "gc_89",
+        "name_kr": "양지파인 CC",
+        "name_en": "Yangji Pine CC",
         "aliases": [
-            "파인밸리",
-            "Pine Valley"
+            "양지"
         ],
         "region_depth1": "경기",
-        "region_depth2": "파주",
+        "region_depth2": "용인",
         "location": {
-            "lat": 37.7512,
-            "lon": 126.7857
-        },
-        "course_type": "Public 27H"
+            "lat": 37.2345,
+            "lon": 127.3012
+        }
+    },
+    {
+        "id": "gc_90",
+        "name_kr": "해비치 CC",
+        "name_en": "Haevichi CC",
+        "aliases": [
+            "해비치"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "화성",
+        "location": {
+            "lat": 37.1567,
+            "lon": 127.1456
+        }
+    },
+    {
+        "id": "gc_91",
+        "name_kr": "리베라 CC",
+        "name_en": "Riviera CC",
+        "aliases": [
+            "리베라"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "화성",
+        "location": {
+            "lat": 37.2012,
+            "lon": 127.1012
+        }
+    },
+    {
+        "id": "gc_92",
+        "name_kr": "발리오스 CC",
+        "name_en": "Balios CC",
+        "aliases": [
+            "발리오스"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "화성",
+        "location": {
+            "lat": 37.1234,
+            "lon": 126.9123
+        }
+    },
+    {
+        "id": "gc_93",
+        "name_kr": "안성 Q",
+        "name_en": "Anseong Q",
+        "aliases": [
+            "안성큐"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "안성",
+        "location": {
+            "lat": 37.0234,
+            "lon": 127.3567
+        }
+    },
+    {
+        "id": "gc_94",
+        "name_kr": "윈체스트 GC",
+        "name_en": "Winchest GC",
+        "aliases": [
+            "윈체스트"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "안성",
+        "location": {
+            "lat": 37.1345,
+            "lon": 127.3234
+        }
+    },
+    {
+        "id": "gc_95",
+        "name_kr": "파인크리크 CC",
+        "name_en": "Pine Creek CC",
+        "aliases": [
+            "파인크리크"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "안성",
+        "location": {
+            "lat": 37.1123,
+            "lon": 127.3456
+        }
+    },
+    {
+        "id": "gc_96",
+        "name_kr": "신안 CC",
+        "name_en": "Shinan CC",
+        "aliases": [
+            "신안"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "안성",
+        "location": {
+            "lat": 37.1012,
+            "lon": 127.2567
+        }
+    },
+    {
+        "id": "gc_97",
+        "name_kr": "스카이밸리 CC",
+        "name_en": "Sky Valley CC",
+        "aliases": [
+            "스카이밸리"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "여주",
+        "location": {
+            "lat": 37.3567,
+            "lon": 127.5345
+        }
+    },
+    {
+        "id": "gc_98",
+        "name_kr": "페럼클럽",
+        "name_en": "Ferrum Club",
+        "aliases": [
+            "페럼"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "여주",
+        "location": {
+            "lat": 37.3345,
+            "lon": 127.5678
+        }
+    },
+    {
+        "id": "gc_99",
+        "name_kr": "금강 CC",
+        "name_en": "Kumgang CC",
+        "aliases": [
+            "금강"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "여주",
+        "location": {
+            "lat": 37.2456,
+            "lon": 127.5678
+        }
+    },
+    {
+        "id": "gc_100",
+        "name_kr": "더스타휴 CC",
+        "name_en": "The Star Hue CC",
+        "aliases": [
+            "더스타휴"
+        ],
+        "region_depth1": "경기",
+        "region_depth2": "양평",
+        "location": {
+            "lat": 37.489,
+            "lon": 127.6543
+        }
     }
 ]
