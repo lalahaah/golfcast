@@ -3,6 +3,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/golf_logo.dart';
+import 'privacy_policy_screen.dart';
+import 'terms_screen.dart';
+import 'location_terms_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   final String version;
@@ -122,7 +125,7 @@ class SettingsScreen extends StatelessWidget {
                       const _MenuItem(
                         icon: LucideIcons.award,
                         label: '개발자',
-                        value: 'N.E.I.L(내일)',
+                        value: 'Next Idea Lab(NIL)',
                         type: _MenuType.text,
                       ),
                     ],
@@ -136,14 +139,15 @@ class SettingsScreen extends StatelessWidget {
                         icon: LucideIcons.mail,
                         label: '문의하기',
                         type: _MenuType.link,
-                        onTap: () => _launchUrl('mailto:support@golfcast.com'),
+                        onTap: () =>
+                            _launchUrl('mailto:nextidealab.ai@gmail.com'),
                       ),
                       _MenuItem(
                         icon: LucideIcons.messageSquare,
                         label: '피드백 보내기',
                         type: _MenuType.link,
                         onTap: () =>
-                            _launchUrl('https://forms.gle/your-form-link'),
+                            _launchUrl('mailto:nextidealab.ai@gmail.com'),
                       ),
                     ],
                   ),
@@ -156,19 +160,86 @@ class SettingsScreen extends StatelessWidget {
                         icon: LucideIcons.shieldCheck,
                         label: '개인정보 처리방침',
                         type: _MenuType.link,
-                        onTap: () {}, // TODO: Add link
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PrivacyPolicyScreen(),
+                            ),
+                          );
+                        },
                       ),
                       _MenuItem(
                         icon: LucideIcons.fileText,
                         label: '서비스 이용약관',
                         type: _MenuType.link,
-                        onTap: () {}, // TODO: Add link
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const TermsOfServiceScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _MenuItem(
+                        icon: LucideIcons.mapPin,
+                        label: '위치정보 이용약관',
+                        type: _MenuType.link,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LocationTermsScreen(),
+                            ),
+                          );
+                        },
                       ),
                       _MenuItem(
                         icon: LucideIcons.github,
                         label: '오픈소스 라이선스',
                         type: _MenuType.link,
-                        onTap: () {}, // TODO: Add link
+                        onTap: () {
+                          showLicensePage(
+                            context: context,
+                            applicationName:
+                                '', // applicationIcon에 포함하여 커스텀 스타일 적용
+                            applicationVersion: version,
+                            applicationIcon: Column(
+                              children: [
+                                const GolfLogo(size: 80),
+                                const SizedBox(height: 16),
+                                const Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Golf',
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w900,
+                                          color: Color(0xFF0F172A), // slate-900
+                                          letterSpacing: -1.0,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: 'Cast',
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w900,
+                                          color: Color(0xFF15803D), // green-700
+                                          letterSpacing: -1.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                            ),
+                            applicationLegalese: '© 2026 Next Idea Lab',
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -177,7 +248,7 @@ class SettingsScreen extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.only(top: 16, bottom: 40),
                     child: Text(
-                      'MADE WITH ❤️ BY NEXT ENGINE IDEA LAB\nALL RIGHTS RESERVED.',
+                      'MADE WITH ❤️ BY NEXT IDEA LAB\nALL RIGHTS RESERVED.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 10,

@@ -702,7 +702,7 @@ class DetailScreen extends ConsumerWidget {
                               size: 18,
                               color: Colors.white,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '티맵',
                               style: TextStyle(
@@ -741,7 +741,7 @@ class DetailScreen extends ConsumerWidget {
                               size: 18,
                               color: Colors.black87,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '카카오맵',
                               style: TextStyle(
