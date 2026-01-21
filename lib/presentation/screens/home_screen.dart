@@ -747,7 +747,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
 
                             const SizedBox(height: 32),
-                            _buildAdBanner(),
+                            // _buildAdBanner(), // 임시로 광고 영역 숨김 (심사용)
 
                             // 하단 버튼이 고정되어 있으므로 스크롤 시 마지막 요소가 가려지지 않게 여백 추가
                             if (selectedCourse != null)
@@ -767,95 +767,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _buildWeatherViewButton(),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAdBanner() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            AspectRatio(
-              aspectRatio: 32 / 9, // 세로 높이를 반으로 줄임 (기존 16:9 -> 32:9)
-              child: Image.asset(
-                'assets/images/premium_ad.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 20,
-              bottom: 20,
-              right: 20,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'AD',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    '필드 위에서 만나는 가장 완벽한 순간',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '프리미엄 골프 장비, 지금 확인해보세요.',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
