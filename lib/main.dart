@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,15 +14,17 @@ void main() async {
   // Kakao SDK 초기화
   KakaoSdk.init(nativeAppKey: '2f57cf81042017c525129b9618f9e994');
 
-  // 디버그용: 현재 키해시 출력
-  try {
-    String keyHash = await KakaoSdk.origin;
-    debugPrint('📱 현재 앱 키해시: $keyHash');
-    debugPrint('⚠️ 카카오 개발자 콘솔(https://developers.kakao.com)에서');
-    debugPrint('   내 애플리케이션 > 앱 설정 > 플랫폼 > Android 플랫폼');
-    debugPrint('   키 해시 항목에 위 값을 등록해주세요.');
-  } catch (e) {
-    debugPrint('키해시 가져오기 실패: $e');
+  // 디버그용: Android에서만 키해시 출력 (카카오 설정용)
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    try {
+      String keyHash = await KakaoSdk.origin;
+      debugPrint('📱 현재 앱 키해시: $keyHash');
+      debugPrint('⚠️ 카카오 개발자 콘솔(https://developers.kakao.com)에서');
+      debugPrint('   내 애플리케이션 > 앱 설정 > 플랫폼 > Android 플랫폼');
+      debugPrint('   키 해시 항목에 위 값을 등록해주세요.');
+    } catch (e) {
+      debugPrint('키해시 가져오기 실패: $e');
+    }
   }
 
   runApp(const ProviderScope(child: GolfCastApp()));

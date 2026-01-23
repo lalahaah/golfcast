@@ -36,6 +36,7 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+  remove_alpha_ios: true
   web:
     generate: true
     image_path: "assets/logo.png"
@@ -47,3 +48,4 @@ flutter_launcher_icons:
     image_path: "assets/logo.png"
   image_path: "assets/logo.png"
   adaptive_icon_background: "#15803D"
+  adaptive_icon_foreground: "assets/logo.png"

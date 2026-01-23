@@ -1,4 +1,4 @@
-package com.example.golfcast
+package com.nextidealab.golfcast
 
 import io.flutter.embedding.android.FlutterActivity
 
