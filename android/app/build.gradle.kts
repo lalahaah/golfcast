@@ -8,7 +8,7 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-val keystorePropertiesFile = rootProject.file("key.properties")
+val keystorePropertiesFile = rootProject.projectDir.parentFile.resolve("key.properties")
 val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
@@ -29,26 +29,30 @@ android {
     }
 
     signingConfigs {
-        val keyAlias = keystoreProperties["keyAlias"] as? String
-        val keyPassword = keystoreProperties["keyPassword"] as? String
-        val storeFile = keystoreProperties["storeFile"] as? String
-        val storePassword = keystoreProperties["storePassword"] as? String
+        val keyAliasValue = keystoreProperties.getProperty("keyAlias")
+        val keyPasswordValue = keystoreProperties.getProperty("keyPassword")
+        val storeFileValue = keystoreProperties.getProperty("storeFile")
+        val storePasswordValue = keystoreProperties.getProperty("storePassword")
 
-        if (keyAlias != null && keyPassword != null && storeFile != null && storePassword != null) {
-            create("release") {
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
-                this.storeFile = file(storeFile)
-                this.storePassword = storePassword
+        if (keyAliasValue != null && keyPasswordValue != null && storeFileValue != null && storePasswordValue != null) {
+            val keystoreFile = rootProject.projectDir.parentFile.resolve(storeFileValue)
+            if (keystoreFile.exists()) {
+                create("release") {
+                    keyAlias = keyAliasValue
+                    keyPassword = keyPasswordValue
+                    storeFile = keystoreFile
+                    storePassword = storePasswordValue
+                }
+            } else {
+                println("WARNING: Keystore file not found at: ${keystoreFile.absolutePath}")
             }
+        } else {
+            println("WARNING: key.properties is incomplete or missing. File path: ${keystorePropertiesFile.absolutePath}")
         }
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.nextidealab.golfcast"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -57,9 +61,10 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+            val releaseSigningConfig = signingConfigs.findByName("release")
+            if (releaseSigningConfig != null) {
+                signingConfig = releaseSigningConfig
+            }
         }
     }
 }

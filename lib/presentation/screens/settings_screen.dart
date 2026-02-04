@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../widgets/golf_logo.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_screen.dart';
 import 'location_terms_screen.dart';
+import '../providers/theme_provider.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   final String version;
 
   const SettingsScreen({super.key, this.version = "1.0.0"});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final isDarkMode =
+        themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC), // slate-50
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -23,10 +31,12 @@ class SettingsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 border: Border(
                   bottom: BorderSide(
-                    color: const Color(0xFFF1F5F9), // slate-100
+                    color: isDarkMode
+                        ? const Color(0xFF334155)
+                        : const Color(0xFFF1F5F9),
                     width: 1,
                   ),
                 ),
@@ -40,21 +50,25 @@ class SettingsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
                         padding: const EdgeInsets.all(8),
-                        child: const Icon(
+                        child: Icon(
                           LucideIcons.chevronLeft,
                           size: 24,
-                          color: Color(0xFF475569), // slate-600
+                          color: isDarkMode
+                              ? const Color(0xFFCBD5E1)
+                              : const Color(0xFF475569),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     '설정 및 정보',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A), // slate-900
+                      color: isDarkMode
+                          ? Colors.white
+                          : const Color(0xFF0F172A),
                     ),
                   ),
                 ],
@@ -73,8 +87,7 @@ class SettingsScreen extends StatelessWidget {
                       children: [
                         const GolfLogo(size: 100),
                         const SizedBox(height: 16),
-                        // 2. App Name (English)
-                        const Text.rich(
+                        Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
@@ -82,16 +95,18 @@ class SettingsScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w900,
-                                  color: Color(0xFF0F172A), // slate-900
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : const Color(0xFF0F172A),
                                   letterSpacing: -1.0,
                                 ),
                               ),
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Cast',
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w900,
-                                  color: Color(0xFF15803D), // green-700
+                                  color: Color(0xFF15803D),
                                   letterSpacing: -1.0,
                                 ),
                               ),
@@ -104,7 +119,7 @@ class SettingsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF64748B), // slate-500
+                            color: Color(0xFF64748B),
                             letterSpacing: 1,
                           ),
                         ),
@@ -114,6 +129,24 @@ class SettingsScreen extends StatelessWidget {
 
                   // Menu Groups
                   _buildMenuGroup(
+                    context,
+                    title: '화면 설정',
+                    items: [
+                      _MenuItem(
+                        icon: isDarkMode ? LucideIcons.moon : LucideIcons.sun,
+                        label: '다크 모드',
+                        type: _MenuType.toggle,
+                        boolValue: isDarkMode,
+                        onChanged: (value) {
+                          ref.read(themeProvider.notifier).toggleTheme(value);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  _buildMenuGroup(
+                    context,
                     title: '앱 정보',
                     items: [
                       _MenuItem(
@@ -133,6 +166,7 @@ class SettingsScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   _buildMenuGroup(
+                    context,
                     title: '고객 지원',
                     items: [
                       _MenuItem(
@@ -154,6 +188,7 @@ class SettingsScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   _buildMenuGroup(
+                    context,
                     title: '법적 고지 및 약관',
                     items: [
                       _MenuItem(
@@ -203,14 +238,13 @@ class SettingsScreen extends StatelessWidget {
                         onTap: () {
                           showLicensePage(
                             context: context,
-                            applicationName:
-                                '', // applicationIcon에 포함하여 커스텀 스타일 적용
+                            applicationName: '',
                             applicationVersion: version,
                             applicationIcon: Column(
                               children: [
                                 const GolfLogo(size: 80),
                                 const SizedBox(height: 16),
-                                const Text.rich(
+                                Text.rich(
                                   TextSpan(
                                     children: [
                                       TextSpan(
@@ -218,16 +252,18 @@ class SettingsScreen extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 28,
                                           fontWeight: FontWeight.w900,
-                                          color: Color(0xFF0F172A), // slate-900
+                                          color: isDarkMode
+                                              ? Colors.white
+                                              : const Color(0xFF0F172A),
                                           letterSpacing: -1.0,
                                         ),
                                       ),
-                                      TextSpan(
+                                      const TextSpan(
                                         text: 'Cast',
                                         style: TextStyle(
                                           fontSize: 28,
                                           fontWeight: FontWeight.w900,
-                                          color: Color(0xFF15803D), // green-700
+                                          color: Color(0xFF15803D),
                                           letterSpacing: -1.0,
                                         ),
                                       ),
@@ -245,14 +281,16 @@ class SettingsScreen extends StatelessWidget {
                   ),
 
                   // Footer Info
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16, bottom: 40),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, bottom: 40),
                     child: Text(
                       'MADE WITH ❤️ BY NEXT IDEA LAB\nALL RIGHTS RESERVED.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 10,
-                        color: Color(0xFFCBD5E1), // slate-300
+                        color: isDarkMode
+                            ? const Color(0xFF475569)
+                            : const Color(0xFFCBD5E1),
                         height: 1.6,
                         letterSpacing: 1.2,
                         fontWeight: FontWeight.w500,
@@ -268,7 +306,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuGroup({
+  Widget _buildMenuGroup(
+    BuildContext context, {
     required String title,
     required List<_MenuItem> items,
   }) {
@@ -282,37 +321,28 @@ class SettingsScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF94A3B8), // slate-400
+              color: Color(0xFF94A3B8),
               letterSpacing: 0.5,
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardTheme.color,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: const Color(0xFFF1F5F9), // slate-100
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            border: Border.all(color: Theme.of(context).dividerTheme.color!),
           ),
           child: Column(
             children: List.generate(items.length, (index) {
               final item = items[index];
               return Column(
                 children: [
-                  _buildListTile(item),
+                  _buildListTile(context, item),
                   if (index != items.length - 1)
                     Divider(
                       height: 1,
                       thickness: 1,
-                      color: const Color(0xFFF8FAFC), // slate-50
+                      color: Theme.of(context).dividerTheme.color,
                     ),
                 ],
               );
@@ -323,7 +353,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(_MenuItem item) {
+  Widget _buildListTile(BuildContext context, _MenuItem item) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -336,31 +366,36 @@ class SettingsScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    item.icon,
-                    size: 18,
-                    color: const Color(0xFF94A3B8), // slate-400
-                  ),
+                  Icon(item.icon, size: 18, color: const Color(0xFF94A3B8)),
                   const SizedBox(width: 12),
                   Text(
                     item.label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF334155), // slate-700
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),
                 ],
               ),
               Row(
                 children: [
-                  if (item.value != null)
+                  if (item.type == _MenuType.toggle)
+                    Transform.scale(
+                      scale: 0.8,
+                      child: Switch.adaptive(
+                        value: item.boolValue ?? false,
+                        onChanged: item.onChanged,
+                        activeTrackColor: const Color(0xFF15803D),
+                      ),
+                    )
+                  else if (item.value != null)
                     Text(
                       item.value!,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF94A3B8), // slate-400
+                        color: Color(0xFF94A3B8),
                       ),
                     ),
                   if (item.type == _MenuType.link) ...[
@@ -368,7 +403,7 @@ class SettingsScreen extends StatelessWidget {
                     const Icon(
                       LucideIcons.chevronRight,
                       size: 16,
-                      color: Color(0xFFCBD5E1), // slate-300
+                      color: Color(0xFFCBD5E1),
                     ),
                   ],
                 ],
@@ -388,20 +423,24 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-enum _MenuType { text, link }
+enum _MenuType { text, link, toggle }
 
 class _MenuItem {
   final IconData icon;
   final String label;
   final String? value;
+  final bool? boolValue;
   final _MenuType type;
   final VoidCallback? onTap;
+  final ValueChanged<bool>? onChanged;
 
   const _MenuItem({
     required this.icon,
     required this.label,
     this.value,
+    this.boolValue,
     required this.type,
     this.onTap,
+    this.onChanged,
   });
 }

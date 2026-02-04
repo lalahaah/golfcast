@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 
 /// GolfCast 디자인 시스템의 타이포그래피
 /// Pretendard 폰트를 사용하여 한국어 가독성 최적화
@@ -24,7 +23,7 @@ class TextStyles {
   static TextStyle displayXL({Color? color}) => _baseStyle.copyWith(
     fontSize: 64,
     fontWeight: FontWeight.bold,
-    color: color ?? AppColors.textStrong,
+    color: color,
     height: 1.1,
   );
 
@@ -33,7 +32,7 @@ class TextStyles {
   static TextStyle heading1({Color? color}) => _baseStyle.copyWith(
     fontSize: 24,
     fontWeight: FontWeight.bold,
-    color: color ?? AppColors.textStrong,
+    color: color,
     height: 1.3,
   );
 
@@ -42,7 +41,7 @@ class TextStyles {
   static TextStyle heading2({Color? color}) => _baseStyle.copyWith(
     fontSize: 20,
     fontWeight: FontWeight.w600,
-    color: color ?? AppColors.textStrong,
+    color: color,
     height: 1.4,
   );
 
@@ -51,7 +50,7 @@ class TextStyles {
   static TextStyle body1({Color? color}) => _baseStyle.copyWith(
     fontSize: 16,
     fontWeight: FontWeight.w500,
-    color: color ?? AppColors.textBody,
+    color: color,
     height: 1.5,
   );
 
@@ -60,7 +59,7 @@ class TextStyles {
   static TextStyle body2({Color? color}) => _baseStyle.copyWith(
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: color ?? AppColors.textBody,
+    color: color,
     height: 1.5,
   );
 
@@ -69,7 +68,7 @@ class TextStyles {
   static TextStyle caption({Color? color}) => _baseStyle.copyWith(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: color ?? AppColors.textMuted,
+    color: color,
     height: 1.4,
   );
 }

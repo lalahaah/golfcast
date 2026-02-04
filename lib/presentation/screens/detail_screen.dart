@@ -14,6 +14,7 @@ import '../../core/services/kakao_share_service.dart';
 import '../../core/services/nav_service.dart';
 
 import 'settings_screen.dart';
+import '../providers/theme_provider.dart';
 
 /// 날씨 상세 화면 (React 프로토타입과 동일한 디자인)
 class DetailScreen extends ConsumerWidget {
@@ -25,6 +26,11 @@ class DetailScreen extends ConsumerWidget {
     final weatherAsync = ref.watch(weatherDataProvider);
     final golfScore = ref.watch(golfScoreProvider);
     final selectedDate = ref.watch(selectedDateProvider);
+    final themeMode = ref.watch(themeProvider);
+    final isDarkMode =
+        themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
 
     if (golfCourse == null) {
       return Scaffold(
@@ -36,14 +42,16 @@ class DetailScreen extends ConsumerWidget {
     final isFavorite = ref.watch(isFavoriteProvider(golfCourse.id));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
             // Sticky Header
             Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Theme.of(
+                  context,
+                ).scaffoldBackgroundColor.withValues(alpha: 0.9),
                 border: Border(
                   bottom: BorderSide(
                     color: AppColors.border.withValues(alpha: 0.3),
@@ -124,7 +132,7 @@ class DetailScreen extends ConsumerWidget {
             ),
 
             // Date Picker Bar
-            _buildDateSelector(context, ref, selectedDate),
+            _buildDateSelector(context, ref, selectedDate, isDarkMode),
 
             // Content
             Expanded(
@@ -136,6 +144,7 @@ class DetailScreen extends ConsumerWidget {
                   golfScore,
                   selectedDate,
                   golfCourse,
+                  isDarkMode,
                 ),
                 loading: () => const SkeletonLoader(),
                 error: (error, stack) => _buildError(context, ref, error),
@@ -151,6 +160,7 @@ class DetailScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     DateTime? selectedDate,
+    bool isDarkMode,
   ) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -160,7 +170,9 @@ class DetailScreen extends ConsumerWidget {
     return Container(
       height: 70,
       padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: const BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+      ),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -195,7 +207,11 @@ class DetailScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.white : AppColors.textMuted,
+                      color: isSelected
+                          ? Colors.white
+                          : (isDarkMode
+                                ? const Color(0xFF94A3B8)
+                                : AppColors.textMuted),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -204,7 +220,9 @@ class DetailScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : AppColors.textStrong,
+                      color: isSelected
+                          ? Colors.white
+                          : (isDarkMode ? Colors.white : AppColors.textStrong),
                     ),
                   ),
                 ],
@@ -223,6 +241,7 @@ class DetailScreen extends ConsumerWidget {
     GolfScore? golfScore,
     DateTime? selectedDate,
     GolfCourse golfCourse,
+    bool isDarkMode,
   ) {
     // 점수에 따른 색상 및 텍스트
     Color scoreColor;
@@ -307,9 +326,16 @@ class DetailScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: scoreBgColor,
+              color: isDarkMode
+                  ? Theme.of(context).cardTheme.color
+                  : scoreBgColor,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: scoreBorderColor, width: 1),
+              border: Border.all(
+                color: isDarkMode
+                    ? Theme.of(context).dividerTheme.color!
+                    : scoreBorderColor,
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.03),
@@ -354,7 +380,7 @@ class DetailScreen extends ConsumerWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardTheme.color,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -447,7 +473,7 @@ class DetailScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: isHighlighted
                           ? AppColors.brandGreen
-                          : Colors.white,
+                          : Theme.of(context).cardTheme.color,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isHighlighted

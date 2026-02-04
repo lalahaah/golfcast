@@ -11,6 +11,7 @@ import '../widgets/golf_logo.dart';
 import 'detail_screen.dart';
 import '../../core/services/app_share_service.dart';
 import 'settings_screen.dart';
+import '../providers/theme_provider.dart';
 
 /// 메인 검색 화면 (React 프로토타입과 동일한 디자인)
 class HomeScreen extends ConsumerStatefulWidget {
@@ -101,6 +102,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final searchResults = ref.watch(golfSearchResultsProvider);
     final selectedCourse = ref.watch(selectedGolfCourseProvider);
     final favoritesAsync = ref.watch(favoriteCoursesProvider);
+    final themeMode = ref.watch(themeProvider);
+    final isDarkMode =
+        themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
 
     return GestureDetector(
       onTap: () {
@@ -112,7 +118,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
       behavior: HitTestBehavior.opaque,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: Stack(
             children: [
@@ -149,7 +155,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       TextSpan(
                                         text: 'Golf',
                                         style: TextStyle(
-                                          color: AppColors.textStrong,
+                                          color: isDarkMode
+                                              ? Colors.white
+                                              : AppColors.textStrong,
                                         ),
                                       ),
                                       TextSpan(
@@ -325,7 +333,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           )
                                         : null,
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: Theme.of(
+                                      context,
+                                    ).cardTheme.color,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(16),
                                       borderSide: BorderSide(
@@ -369,7 +379,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   }
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Theme.of(context).cardTheme.color,
                                       borderRadius: BorderRadius.circular(16),
                                       boxShadow: [
                                         BoxShadow(
@@ -552,11 +562,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             padding: const EdgeInsets.all(24),
                                             width: double.infinity,
                                             decoration: BoxDecoration(
-                                              color: Colors.white,
+                                              color: Theme.of(
+                                                context,
+                                              ).cardTheme.color,
                                               borderRadius:
                                                   BorderRadius.circular(16),
                                               border: Border.all(
-                                                color: AppColors.border,
+                                                color: Theme.of(
+                                                  context,
+                                                ).dividerTheme.color!,
                                               ),
                                             ),
                                             child: Column(
@@ -595,13 +609,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     16,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.white,
+                                                    color: Theme.of(
+                                                      context,
+                                                    ).cardTheme.color,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           16,
                                                         ),
                                                     border: Border.all(
-                                                      color: AppColors.border,
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).dividerTheme.color!,
                                                       width: 1,
                                                     ),
                                                     boxShadow: [
@@ -714,9 +732,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             onPressed: () =>
                                                 _handleSearch(name),
                                             style: OutlinedButton.styleFrom(
-                                              backgroundColor: Colors.white,
+                                              backgroundColor: Theme.of(
+                                                context,
+                                              ).cardTheme.color,
                                               side: BorderSide(
-                                                color: AppColors.border,
+                                                color: Theme.of(
+                                                  context,
+                                                ).dividerTheme.color!,
                                                 width: 1,
                                               ),
                                               shape: RoundedRectangleBorder(
