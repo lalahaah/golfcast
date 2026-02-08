@@ -585,8 +585,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                             const SizedBox(height: 32),
 
-                            const SizedBox(height: 20),
-
                             // Idle 상태 콘텐츠
                             if (_searchController.text.isEmpty)
                               AnimatedOpacity(
