@@ -12,6 +12,9 @@ import 'detail_screen.dart';
 import '../../core/services/app_share_service.dart';
 import 'settings_screen.dart';
 import '../providers/theme_provider.dart';
+import '../providers/search_history_provider.dart';
+import 'package:flutter/cupertino.dart';
+import '../../domain/entities/golf_course.dart';
 
 /// 메인 검색 화면 (React 프로토타입과 동일한 디자인)
 class HomeScreen extends ConsumerStatefulWidget {
@@ -95,6 +98,92 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.read(golfSearchQueryProvider.notifier).state = name;
       }
     });
+  }
+
+  void _selectCourse(GolfCourse course) {
+    setState(() {
+      _searchController.text = course.nameKr;
+    });
+    ref.read(selectedGolfCourseProvider.notifier).state = course;
+    ref.read(searchHistoryProvider.notifier).incrementCount(course.id);
+    _focusNode.unfocus();
+
+    // 사용자가 '팝업'으로 이동을 원하므로, 바텀 시트를 띄워 날짜/시간을 바로 설정하게 함
+    _showDateTimeBottomSheet(context, course);
+  }
+
+  void _showDateTimeBottomSheet(BuildContext context, GolfCourse course) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 24,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 40,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(course.nameKr, style: TextStyles.heading2()),
+                    Text(
+                      course.fullRegion,
+                      style: TextStyles.caption(color: AppColors.textMuted),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Text(
+              '라운딩 일정 설정',
+              style: TextStyles.body1().copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _buildDateTimeSelector(),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DetailScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.brandGreen,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 56),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: const Text(
+                '날씨 확인하기',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -229,6 +318,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: Column(
                           children: [
+                            const SizedBox(height: 48),
                             // Hero 카피
                             AnimatedOpacity(
                               opacity:
@@ -239,11 +329,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               duration: const Duration(milliseconds: 500),
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 500),
-                                transform: Matrix4.translationValues(
-                                  0,
-                                  _isFocused ? -10 : 0,
-                                  0,
-                                ),
                                 child: Column(
                                   children: [
                                     Text(
@@ -251,31 +336,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       style: TextStyles.heading1(),
                                       textAlign: TextAlign.center,
                                     ),
-                                    const SizedBox(height: 12),
-                                    RichText(
-                                      textAlign: TextAlign.center,
-                                      text: TextSpan(
-                                        style: TextStyles.body2(),
-                                        children: [
-                                          const TextSpan(
-                                            text: '골프장 날씨부터 공략법까지,\n',
-                                          ),
-                                          TextSpan(
-                                            text: '골프캐스트',
-                                            style: TextStyle(
-                                              color: AppColors.brandGreen,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const TextSpan(text: '가 알려드립니다.'),
-                                        ],
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 32),
+                            const SizedBox(height: 40),
 
                             // 검색창
                             AnimatedScale(
@@ -405,20 +470,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             selectedCourse?.id == course.id;
 
                                         return InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              _searchController.text =
-                                                  course.nameKr;
-                                            });
-                                            ref
-                                                    .read(
-                                                      selectedGolfCourseProvider
-                                                          .notifier,
-                                                    )
-                                                    .state =
-                                                course;
-                                            _focusNode.unfocus();
-                                          },
+                                          onTap: () => _selectCourse(course),
                                           child: Container(
                                             padding: const EdgeInsets.all(20),
                                             decoration: BoxDecoration(
@@ -702,68 +754,109 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     ),
                                     const SizedBox(height: 32),
 
-                                    // 인기 골프장 Top 3
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.star,
-                                          size: 14,
-                                          color: Colors.amber[400],
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '인기 골프장 Top 3',
-                                          style: TextStyles.body1().copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      children: ['베네스트', '남촌', '이스트밸리'].map((
-                                        name,
-                                      ) {
-                                        return Container(
-                                          margin: const EdgeInsets.only(
-                                            right: 12,
-                                          ),
-                                          child: OutlinedButton(
-                                            onPressed: () =>
-                                                _handleSearch(name),
-                                            style: OutlinedButton.styleFrom(
-                                              backgroundColor: Theme.of(
-                                                context,
-                                              ).cardTheme.color,
-                                              side: BorderSide(
-                                                color: Theme.of(
-                                                  context,
-                                                ).dividerTheme.color!,
-                                                width: 1,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 8,
+                                    // 자주 찾는 골프장 Top 3
+                                    ref
+                                        .watch(topSearchedCoursesProvider)
+                                        .when(
+                                          data: (topCourses) {
+                                            if (topCourses.isEmpty) {
+                                              return const SizedBox.shrink();
+                                            }
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.history,
+                                                      size: 14,
+                                                      color:
+                                                          AppColors.brandGreen,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      '자주 찾는 골프장 Top 3',
+                                                      style: TextStyles.body1()
+                                                          .copyWith(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 12),
+                                                SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Row(
+                                                    children: topCourses.map((
+                                                      course,
+                                                    ) {
+                                                      return Container(
+                                                        margin:
+                                                            const EdgeInsets.only(
+                                                              right: 12,
+                                                            ),
+                                                        child: OutlinedButton(
+                                                          onPressed: () =>
+                                                              _selectCourse(
+                                                                course,
+                                                              ),
+                                                          style: OutlinedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .cardTheme
+                                                                    .color,
+                                                            side: BorderSide(
+                                                              color:
+                                                                  Theme.of(
+                                                                        context,
+                                                                      )
+                                                                      .dividerTheme
+                                                                      .color!,
+                                                              width: 1,
+                                                            ),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    20,
+                                                                  ),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      16,
+                                                                  vertical: 8,
+                                                                ),
+                                                          ),
+                                                          child: Text(
+                                                            course.nameKr,
+                                                            style:
+                                                                TextStyles.body2(
+                                                                  color: AppColors
+                                                                      .textBody,
+                                                                ).copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
                                                   ),
-                                            ),
-                                            child: Text(
-                                              name,
-                                              style:
-                                                  TextStyles.body2(
-                                                    color: AppColors.textBody,
-                                                  ).copyWith(
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                          loading: () =>
+                                              const SizedBox.shrink(),
+                                          error: (err, stack) =>
+                                              const SizedBox.shrink(),
+                                        ),
                                   ],
                                 ),
                               ),
