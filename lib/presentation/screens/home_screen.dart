@@ -862,7 +862,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
 
                             const SizedBox(height: 32),
-                            // _buildAdBanner(), // 임시로 광고 영역 숨김 (심사용)
+                            // 광고 배너
+                            _buildAdBanner(),
 
                             // 하단 버튼이 고정되어 있으므로 스크롤 시 마지막 요소가 가려지지 않게 여백 추가
                             if (selectedCourse != null)
@@ -1084,6 +1085,56 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAdBanner() {
+    return Container(
+      width: double.infinity,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).dividerTheme.color!.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.textMuted.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'AD',
+                style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.campaign_outlined,
+                  size: 24,
+                  color: AppColors.brandGreen.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '광고 영역입니다',
+                  style: TextStyles.caption(color: AppColors.textMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

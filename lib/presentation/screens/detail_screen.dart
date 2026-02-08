@@ -849,6 +849,8 @@ class DetailScreen extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 24),
+          _buildAdBanner(context),
           const SizedBox(height: 40),
         ],
       ),
@@ -1026,6 +1028,56 @@ class DetailScreen extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAdBanner(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).dividerTheme.color!.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.textMuted.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'AD',
+                style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.campaign_outlined,
+                  size: 24,
+                  color: AppColors.brandGreen.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '광고 영역입니다',
+                  style: TextStyles.caption(color: AppColors.textMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
