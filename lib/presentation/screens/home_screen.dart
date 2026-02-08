@@ -653,9 +653,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                 bottom: 12,
                                               ),
                                               child: InkWell(
-                                                onTap: () => _handleSearch(
-                                                  course.nameKr,
-                                                ),
+                                                onTap: () =>
+                                                    _selectCourse(course),
                                                 child: Container(
                                                   padding: const EdgeInsets.all(
                                                     16,
@@ -759,9 +758,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         .watch(topSearchedCoursesProvider)
                                         .when(
                                           data: (topCourses) {
-                                            if (topCourses.isEmpty) {
-                                              return const SizedBox.shrink();
-                                            }
                                             return Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -786,69 +782,75 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                   ],
                                                 ),
                                                 const SizedBox(height: 12),
-                                                SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  child: Row(
-                                                    children: topCourses.map((
-                                                      course,
-                                                    ) {
-                                                      return Container(
-                                                        margin:
-                                                            const EdgeInsets.only(
-                                                              right: 12,
-                                                            ),
-                                                        child: OutlinedButton(
-                                                          onPressed: () =>
-                                                              _selectCourse(
-                                                                course,
+                                                if (topCourses.isEmpty)
+                                                  Text(
+                                                    '검색 이력이 없습니다. 골프장을 검색하고 방문해 보세요!',
+                                                    style: TextStyles.caption(
+                                                      color:
+                                                          AppColors.textMuted,
+                                                    ),
+                                                  )
+                                                else
+                                                  SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child: Row(
+                                                      children: topCourses.map((
+                                                        course,
+                                                      ) {
+                                                        return Container(
+                                                          margin:
+                                                              const EdgeInsets.only(
+                                                                right: 12,
                                                               ),
-                                                          style: OutlinedButton.styleFrom(
-                                                            backgroundColor:
-                                                                Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .cardTheme
-                                                                    .color,
-                                                            side: BorderSide(
-                                                              color:
+                                                          child: OutlinedButton(
+                                                            onPressed: () =>
+                                                                _selectCourse(
+                                                                  course,
+                                                                ),
+                                                            style: OutlinedButton.styleFrom(
+                                                              backgroundColor:
                                                                   Theme.of(
                                                                         context,
                                                                       )
-                                                                      .dividerTheme
-                                                                      .color!,
-                                                              width: 1,
-                                                            ),
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    20,
+                                                                      .cardTheme
+                                                                      .color,
+                                                              side: BorderSide(
+                                                                color: Theme.of(
+                                                                  context,
+                                                                ).dividerTheme.color!,
+                                                                width: 1,
+                                                              ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      20,
+                                                                    ),
+                                                              ),
+                                                              padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical: 8,
                                                                   ),
                                                             ),
-                                                            padding:
-                                                                const EdgeInsets.symmetric(
-                                                                  horizontal:
-                                                                      16,
-                                                                  vertical: 8,
-                                                                ),
+                                                            child: Text(
+                                                              course.nameKr,
+                                                              style:
+                                                                  TextStyles.body2(
+                                                                    color: AppColors
+                                                                        .textBody,
+                                                                  ).copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                            ),
                                                           ),
-                                                          child: Text(
-                                                            course.nameKr,
-                                                            style:
-                                                                TextStyles.body2(
-                                                                  color: AppColors
-                                                                      .textBody,
-                                                                ).copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
+                                                        );
+                                                      }).toList(),
+                                                    ),
                                                   ),
-                                                ),
                                               ],
                                             );
                                           },
