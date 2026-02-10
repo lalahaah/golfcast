@@ -1,7 +1,7 @@
 name: golfcast
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.2+5
+version: 0.1.4+7
 
 environment:
   sdk: ^3.10.4
@@ -20,6 +20,7 @@ dependencies:
   kakao_flutter_sdk_share: ^1.10.0
   kakao_flutter_sdk_common: ^1.10.0
   share_plus: ^10.1.4
+  google_mobile_ads: ^7.0.0
 
 dev_dependencies:
   flutter_test:

@@ -15,13 +15,51 @@ import '../../core/services/nav_service.dart';
 
 import 'settings_screen.dart';
 import '../providers/theme_provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../../core/services/ad_service.dart';
 
 /// 날씨 상세 화면 (React 프로토타입과 동일한 디자인)
-class DetailScreen extends ConsumerWidget {
+class DetailScreen extends ConsumerStatefulWidget {
   const DetailScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends ConsumerState<DetailScreen> {
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = AdService.createBannerAd(
+      onAdLoaded: (ad) {
+        if (mounted) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        }
+      },
+      onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        debugPrint('BannerAd failed to load: $error');
+      },
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final golfCourse = ref.watch(selectedGolfCourseProvider);
     final weatherAsync = ref.watch(weatherDataProvider);
     final golfScore = ref.watch(golfScoreProvider);
@@ -43,6 +81,7 @@ class DetailScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      bottomNavigationBar: _isBannerAdLoaded ? _buildAdBanner() : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -519,7 +558,9 @@ class DetailScreen extends ConsumerWidget {
                             fontWeight: FontWeight.bold,
                             color: isHighlighted
                                 ? Colors.white
-                                : AppColors.textStrong,
+                                : (isDarkMode
+                                      ? Colors.white
+                                      : AppColors.textStrong),
                           ),
                         ),
                       ],
@@ -529,7 +570,7 @@ class DetailScreen extends ConsumerWidget {
               ),
             )
           else if (dailyForDate != null)
-            _buildDailySummaryCard(dailyForDate)
+            _buildDailySummaryCard(context, dailyForDate)
           else
             const Center(child: Text('해당 날짜의 예보 정보가 존재하지 않습니다.')),
 
@@ -559,42 +600,46 @@ class DetailScreen extends ConsumerWidget {
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 1.3,
+            childAspectRatio: 1.1, // 높이를 조금 더 확보하여 오버플로 방지
             children: [
               _buildAnalysisCard(
+                context,
                 icon: Icons.air,
                 iconColor: Colors.blue[500]!,
-                iconBgColor: Colors.blue[50]!,
                 label: '바람',
                 value:
                     '${golfScore?.windSpeed.toStringAsFixed(1) ?? '0.0'} m/s',
+                onTap: () => _showHourlyDetail(context, 'wind', hourlyForDate),
               ),
               _buildAnalysisCard(
+                context,
                 icon: Icons.thermostat,
                 iconColor: Colors.orange[500]!,
-                iconBgColor: Colors.orange[50]!,
                 label: '기온/체감',
                 value:
                     '${golfScore?.temperature.toStringAsFixed(0) ?? weather.current.temperature.toStringAsFixed(0)}° / ${golfScore?.feelsLike.toStringAsFixed(0) ?? weather.current.feelsLike.toStringAsFixed(0)}°',
+                onTap: () => _showHourlyDetail(context, 'temp', hourlyForDate),
               ),
               _buildAnalysisCard(
+                context,
                 icon: Icons.umbrella,
                 iconColor: Colors.teal[500]!,
-                iconBgColor: Colors.teal[50]!,
                 label: '강수/습도',
                 value:
                     '${golfScore?.rainAmount.toStringAsFixed(1) ?? weather.current.rainAmount.toStringAsFixed(1)}mm / ${golfScore?.humidity ?? weather.current.humidity}%',
+                onTap: () => _showHourlyDetail(context, 'rain', hourlyForDate),
               ),
               _buildAnalysisCard(
+                context,
                 icon: Icons.wb_sunny_outlined,
                 iconColor: Colors.red[400]!,
-                iconBgColor: Colors.red[50]!,
                 label: '자외선',
                 value:
                     (golfScore?.uvi ?? weather.current.uvi)?.toStringAsFixed(
                       1,
                     ) ??
                     '0.0',
+                onTap: () => _showHourlyDetail(context, 'uvi', hourlyForDate),
               ),
             ],
           ),
@@ -850,20 +895,27 @@ class DetailScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          _buildAdBanner(context),
+          _buildAdBanner(),
           const SizedBox(height: 40),
         ],
       ),
     );
   }
 
-  Widget _buildDailySummaryCard(DailyWeather daily) {
+  Widget _buildDailySummaryCard(BuildContext context, DailyWeather daily) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
+        border: Border.all(
+          color:
+              theme.dividerTheme.color?.withValues(alpha: 0.5) ??
+              AppColors.border.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
@@ -879,24 +931,36 @@ class DetailScreen extends ConsumerWidget {
               children: [
                 Text(
                   '${daily.minTemp.toStringAsFixed(0)}° / ${daily.maxTemp.toStringAsFixed(0)}°',
-                  style: TextStyles.heading2(),
+                  style: TextStyles.heading2(
+                    color: isDark ? Colors.white : AppColors.textStrong,
+                  ),
                 ),
                 Text(
                   daily.weatherDescription,
-                  style: TextStyles.body2(color: AppColors.textMuted),
+                  style: TextStyles.body2(
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : AppColors.textMuted,
+                  ),
                 ),
               ],
             ),
           ),
           Column(
             children: [
-              const Text(
+              Text(
                 '강수확률',
-                style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? const Color(0xFF94A3B8) : AppColors.textMuted,
+                ),
               ),
               Text(
                 '${(daily.rainProb * 100).toInt()}%',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.textStrong,
+                ),
               ),
             ],
           ),
@@ -905,45 +969,229 @@ class DetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAnalysisCard({
+  Widget _buildAnalysisCard(
+    BuildContext context, {
     required IconData icon,
     required Color iconColor,
-    required Color iconBgColor,
     required String label,
     required String value,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.3),
-          width: 1,
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: theme.cardTheme.color,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color:
+                theme.dividerTheme.color?.withValues(alpha: 0.5) ??
+                AppColors.border.withValues(alpha: 0.3),
+            width: 1,
+          ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconBgColor,
-              borderRadius: BorderRadius.circular(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: isDark ? 0.15 : 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(icon, size: 20, color: iconColor),
             ),
-            child: Icon(icon, size: 20, color: iconColor),
-          ),
-          const SizedBox(height: 8),
-          Text(label, style: TextStyles.caption()),
-          const SizedBox(height: 4),
-          Text(value, style: TextStyles.heading2()),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyles.caption(
+                color: isDark ? const Color(0xFF94A3B8) : AppColors.textMuted,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: TextStyles.heading2(
+                color: isDark ? Colors.white : AppColors.textStrong,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showHourlyDetail(
+    BuildContext context,
+    String type,
+    List<HourlyWeather> hourlyData,
+  ) {
+    String title;
+    IconData icon;
+    Color color;
+
+    switch (type) {
+      case 'wind':
+        title = '시간별 바람 예보';
+        icon = Icons.air;
+        color = Colors.blue;
+        break;
+      case 'temp':
+        title = '시간별 기온 예보';
+        icon = Icons.thermostat;
+        color = Colors.orange;
+        break;
+      case 'rain':
+        title = '시간별 강수 예보';
+        icon = Icons.umbrella;
+        color = Colors.teal;
+        break;
+      case 'uvi':
+        title = '시간별 자외선 예보';
+        icon = Icons.wb_sunny_outlined;
+        color = Colors.red;
+        break;
+      default:
+        return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Row(
+                children: [
+                  Icon(icon, color: color),
+                  const SizedBox(width: 12),
+                  Text(title, style: TextStyles.heading2()),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                itemCount: hourlyData.length,
+                itemBuilder: (context, index) {
+                  final h = hourlyData[index];
+                  final dateStr = DateFormat('MM.dd').format(h.time);
+                  final timeStr = DateFormat('HH:00').format(h.time);
+                  String valueText = '';
+                  String subText = '';
+
+                  if (type == 'wind') {
+                    valueText = '${h.windSpeed.toStringAsFixed(1)} m/s';
+                  } else if (type == 'temp') {
+                    valueText = '${h.temperature.toStringAsFixed(0)}°';
+                    subText = '체감 ${h.feelsLike.toStringAsFixed(0)}°';
+                  } else if (type == 'rain') {
+                    valueText = '${h.rainAmount.toStringAsFixed(1)}mm';
+                    subText = '습도 ${h.humidity}%';
+                  } else if (type == 'uvi') {
+                    valueText = h.uvi?.toStringAsFixed(1) ?? '0.0';
+                  }
+
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: AppColors.border.withValues(alpha: 0.3),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              timeStr,
+                              style: TextStyles.body1(
+                                color: isDark
+                                    ? Colors.white
+                                    : AppColors.textStrong,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              dateStr,
+                              style: TextStyles.caption(
+                                color: isDark
+                                    ? const Color(0xFF94A3B8)
+                                    : AppColors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              valueText,
+                              style: TextStyles.body1(
+                                color: isDark
+                                    ? Colors.white
+                                    : AppColors.textStrong,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            if (subText.isNotEmpty)
+                              Text(
+                                subText,
+                                style: TextStyles.caption(
+                                  color: isDark
+                                      ? const Color(0xFF94A3B8)
+                                      : AppColors.textMuted,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1031,53 +1279,16 @@ class DetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAdBanner(BuildContext context) {
+  Widget _buildAdBanner() {
+    if (_bannerAd == null || !_isBannerAdLoaded) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      width: double.infinity,
-      height: 80,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerTheme.color!.withValues(alpha: 0.5),
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 8,
-            right: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.textMuted.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'AD',
-                style: TextStyle(fontSize: 10, color: AppColors.textMuted),
-              ),
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.campaign_outlined,
-                  size: 24,
-                  color: AppColors.brandGreen.withValues(alpha: 0.5),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '광고 영역입니다',
-                  style: TextStyles.caption(color: AppColors.textMuted),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      alignment: Alignment.center,
+      width: _bannerAd!.size.width.toDouble(),
+      height: _bannerAd!.size.height.toDouble(),
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 }

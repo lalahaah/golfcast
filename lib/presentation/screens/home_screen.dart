@@ -15,6 +15,8 @@ import '../providers/theme_provider.dart';
 import '../providers/search_history_provider.dart';
 import 'package:flutter/cupertino.dart';
 import '../../domain/entities/golf_course.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../../core/services/ad_service.dart';
 
 /// 메인 검색 화면 (React 프로토타입과 동일한 디자인)
 class HomeScreen extends ConsumerStatefulWidget {
@@ -31,6 +33,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isLoading = false;
   Timer? _debounce;
 
+  // 광고 관련
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +47,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         });
       }
     });
+
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = AdService.createBannerAd(
+      onAdLoaded: (ad) {
+        if (mounted) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        }
+      },
+      onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        debugPrint('BannerAd failed to load: $error');
+      },
+    )..load();
   }
 
   @override
@@ -48,6 +72,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _searchController.dispose();
     _focusNode.dispose();
     _debounce?.cancel();
+    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -208,6 +233,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       behavior: HitTestBehavior.opaque,
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        bottomNavigationBar: _isBannerAdLoaded ? _buildAdBanner() : null,
         body: SafeArea(
           child: Stack(
             children: [
@@ -1090,52 +1116,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildAdBanner() {
+    if (_bannerAd == null || !_isBannerAdLoaded) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      width: double.infinity,
-      height: 80,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerTheme.color!.withValues(alpha: 0.5),
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 8,
-            right: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.textMuted.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'AD',
-                style: TextStyle(fontSize: 10, color: AppColors.textMuted),
-              ),
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.campaign_outlined,
-                  size: 24,
-                  color: AppColors.brandGreen.withValues(alpha: 0.5),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '광고 영역입니다',
-                  style: TextStyles.caption(color: AppColors.textMuted),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      alignment: Alignment.center,
+      width: _bannerAd!.size.width.toDouble(),
+      height: _bannerAd!.size.height.toDouble(),
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 }
