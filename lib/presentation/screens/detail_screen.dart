@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -37,19 +39,22 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   }
 
   void _loadBannerAd() {
-    _bannerAd = AdService.createBannerAd(
-      onAdLoaded: (ad) {
-        if (mounted) {
-          setState(() {
-            _isBannerAdLoaded = true;
-          });
-        }
-      },
-      onAdFailedToLoad: (ad, error) {
-        ad.dispose();
-        debugPrint('BannerAd failed to load: $error');
-      },
-    )..load();
+    // 모바일 플랫폼(Android, iOS)인 경우에만 광고를 로드합니다.
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      _bannerAd = AdService.createBannerAd(
+        onAdLoaded: (ad) {
+          if (mounted) {
+            setState(() {
+              _isBannerAdLoaded = true;
+            });
+          }
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint('BannerAd failed to load: $error');
+        },
+      )..load();
+    }
   }
 
   @override
@@ -1103,92 +1108,124 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                controller: scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                itemCount: hourlyData.length,
-                itemBuilder: (context, index) {
-                  final h = hourlyData[index];
-                  final dateStr = DateFormat('MM.dd').format(h.time);
-                  final timeStr = DateFormat('HH:00').format(h.time);
-                  String valueText = '';
-                  String subText = '';
-
-                  if (type == 'wind') {
-                    valueText = '${h.windSpeed.toStringAsFixed(1)} m/s';
-                  } else if (type == 'temp') {
-                    valueText = '${h.temperature.toStringAsFixed(0)}°';
-                    subText = '체감 ${h.feelsLike.toStringAsFixed(0)}°';
-                  } else if (type == 'rain') {
-                    valueText = '${h.rainAmount.toStringAsFixed(1)}mm';
-                    subText = '습도 ${h.humidity}%';
-                  } else if (type == 'uvi') {
-                    valueText = h.uvi?.toStringAsFixed(1) ?? '0.0';
-                  }
-
-                  final isDark =
-                      Theme.of(context).brightness == Brightness.dark;
-
-                  return Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: AppColors.border.withValues(alpha: 0.3),
+              child: hourlyData.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              size: 48,
+                              color: AppColors.textMuted.withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              '시간별 예보는 현재 시간 기준\n48시간 이내의 데이터만 제공됩니다.',
+                              textAlign: TextAlign.center,
+                              style: TextStyles.body1(
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '그 외 날짜는 일별 요약을 참고해주세요.',
+                              textAlign: TextAlign.center,
+                              style: TextStyles.caption(
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              timeStr,
-                              style: TextStyles.body1(
-                                color: isDark
-                                    ? Colors.white
-                                    : AppColors.textStrong,
-                              ).copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              dateStr,
-                              style: TextStyles.caption(
-                                color: isDark
-                                    ? const Color(0xFF94A3B8)
-                                    : AppColors.textMuted,
+                    )
+                  : ListView.builder(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      itemCount: hourlyData.length,
+                      itemBuilder: (context, index) {
+                        final h = hourlyData[index];
+                        final dateStr = DateFormat('MM.dd').format(h.time);
+                        final timeStr = DateFormat('HH:00').format(h.time);
+                        String valueText = '';
+                        String subText = '';
+
+                        if (type == 'wind') {
+                          valueText = '${h.windSpeed.toStringAsFixed(1)} m/s';
+                        } else if (type == 'temp') {
+                          valueText = '${h.temperature.toStringAsFixed(0)}°';
+                          subText = '체감 ${h.feelsLike.toStringAsFixed(0)}°';
+                        } else if (type == 'rain') {
+                          valueText = '${h.rainAmount.toStringAsFixed(1)}mm';
+                          subText = '습도 ${h.humidity}%';
+                        } else if (type == 'uvi') {
+                          valueText = h.uvi?.toStringAsFixed(1) ?? '0.0';
+                        }
+
+                        final isDark =
+                            Theme.of(context).brightness == Brightness.dark;
+
+                        return Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: AppColors.border.withValues(alpha: 0.3),
                               ),
                             ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              valueText,
-                              style: TextStyles.body1(
-                                color: isDark
-                                    ? Colors.white
-                                    : AppColors.textStrong,
-                              ).copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            if (subText.isNotEmpty)
-                              Text(
-                                subText,
-                                style: TextStyles.caption(
-                                  color: isDark
-                                      ? const Color(0xFF94A3B8)
-                                      : AppColors.textMuted,
-                                ),
+                          ),
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    timeStr,
+                                    style: TextStyles.body1(
+                                      color: isDark
+                                          ? Colors.white
+                                          : AppColors.textStrong,
+                                    ).copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    dateStr,
+                                    style: TextStyles.caption(
+                                      color: isDark
+                                          ? const Color(0xFF94A3B8)
+                                          : AppColors.textMuted,
+                                    ),
+                                  ),
+                                ],
                               ),
-                          ],
-                        ),
-                      ],
+                              const Spacer(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    valueText,
+                                    style: TextStyles.body1(
+                                      color: isDark
+                                          ? Colors.white
+                                          : AppColors.textStrong,
+                                    ).copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  if (subText.isNotEmpty)
+                                    Text(
+                                      subText,
+                                      style: TextStyles.caption(
+                                        color: isDark
+                                            ? const Color(0xFF94A3B8)
+                                            : AppColors.textMuted,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

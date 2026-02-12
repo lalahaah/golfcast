@@ -14,17 +14,25 @@ class AdService {
       }
     }
 
-    // TODO: 실배포 시 실제 광고 단위 ID로 교체
+    // 실배포 시 실제 광고 단위 ID로 교체
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-7835510494346254/5027928255';
     } else {
-      return 'ca-app-pub-3940256099942544/2934735716';
+      // iOS용 ID가 따로 제공되지 않았으므로 동일한 ID를 사용하거나 필요시 업데이트
+      return 'ca-app-pub-7835510494346254/5027928255';
     }
   }
 
   /// AdMob SDK 초기화
   static Future<void> initialize() async {
-    await MobileAds.instance.initialize();
+    // AdMob은 모바일(Android, iOS) 플랫폼만 지원합니다.
+    // 데스크탑(macOS 등)이나 웹에서는 초기화를 건너뛰어 에러를 방지합니다.
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      await MobileAds.instance.initialize();
+      debugPrint('AdMob SDK 초기화 완료');
+    } else {
+      debugPrint('AdMob SDK: 현재 플랫폼은 지원되지 않으므로 초기화를 건너뜁니다.');
+    }
   }
 
   /// 배너 광고 위젯 생성 (간소화된 형태)

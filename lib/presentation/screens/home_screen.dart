@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -52,19 +54,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _loadBannerAd() {
-    _bannerAd = AdService.createBannerAd(
-      onAdLoaded: (ad) {
-        if (mounted) {
-          setState(() {
-            _isBannerAdLoaded = true;
-          });
-        }
-      },
-      onAdFailedToLoad: (ad, error) {
-        ad.dispose();
-        debugPrint('BannerAd failed to load: $error');
-      },
-    )..load();
+    // 모바일 플랫폼(Android, iOS)인 경우에만 광고를 로드합니다.
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      _bannerAd = AdService.createBannerAd(
+        onAdLoaded: (ad) {
+          if (mounted) {
+            setState(() {
+              _isBannerAdLoaded = true;
+            });
+          }
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint('BannerAd failed to load: $error');
+        },
+      )..load();
+    }
   }
 
   @override
@@ -131,6 +136,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
     ref.read(selectedGolfCourseProvider.notifier).state = course;
     ref.read(searchHistoryProvider.notifier).incrementCount(course.id);
+
+    // 골프장 선택 시 기본 날짜를 오늘로 자동 설정 (시간 선택 활성화를 위해)
+    if (ref.read(selectedDateProvider) == null) {
+      final now = DateTime.now();
+      ref.read(selectedDateProvider.notifier).state = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      );
+    }
+
     _focusNode.unfocus();
 
     // 사용자가 '팝업'으로 이동을 원하므로, 바텀 시트를 띄워 날짜/시간을 바로 설정하게 함
@@ -979,44 +995,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: selectedDate == null
-                ? null
-                : () async {
-                    debugPrint('시간 선택 버튼 클릭됨'); // 디버그용
-                    final now = TimeOfDay.now();
-                    final picked = await showTimePicker(
-                      context: context,
-                      initialTime: selectedTime ?? now,
-                    );
-                    if (picked != null) {
-                      debugPrint('선택된 시간: $picked'); // 디버그용
-                      if (dateKey != null) {
-                        final newTimes = Map<String, TimeOfDay>.from(
-                          selectedTimes,
-                        );
-                        newTimes[dateKey] = picked;
-                        ref.read(selectedTimesProvider.notifier).state =
-                            newTimes;
-                      }
-                    }
-                  },
+            onPressed: () async {
+              debugPrint('시간 선택 버튼 클릭됨'); // 디버그용
+              if (selectedDate == null) {
+                final now = DateTime.now();
+                ref.read(selectedDateProvider.notifier).state = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                );
+              }
+              final now = TimeOfDay.now();
+              final picked = await showTimePicker(
+                context: context,
+                initialTime: selectedTime ?? now,
+              );
+              if (picked != null) {
+                debugPrint('선택된 시간: $picked'); // 디버그용
+                // 위에서 selectedDate를 설정했으므로 다시 한 번 가져와서 dateKey를 만듭니다.
+                final currentSelectedDate = ref.read(selectedDateProvider);
+                if (currentSelectedDate != null) {
+                  final newDateKey =
+                      '${currentSelectedDate.year}-${currentSelectedDate.month}-${currentSelectedDate.day}';
+                  final newTimes = Map<String, TimeOfDay>.from(selectedTimes);
+                  newTimes[newDateKey] = picked;
+                  ref.read(selectedTimesProvider.notifier).state = newTimes;
+                }
+              }
+            },
             icon: Icon(
               Icons.access_time,
               size: 16,
               color: selectedTime != null
                   ? AppColors.brandGreen
-                  : (selectedDate == null
-                        ? AppColors.textMuted.withValues(alpha: 0.3)
-                        : AppColors.textMuted),
+                  : AppColors.textMuted,
             ),
             label: Text(
               selectedTime != null ? selectedTime.format(context) : '시간 선택',
               style: TextStyles.body2(
                 color: selectedTime != null
                     ? AppColors.brandGreen
-                    : (selectedDate == null
-                          ? AppColors.textMuted.withValues(alpha: 0.3)
-                          : AppColors.textBody),
+                    : AppColors.textBody,
               ),
             ),
             style: OutlinedButton.styleFrom(
