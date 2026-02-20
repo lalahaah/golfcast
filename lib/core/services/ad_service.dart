@@ -18,7 +18,7 @@ class AdService {
     if (Platform.isAndroid) {
       return 'ca-app-pub-7835510494346254/5027928255';
     } else {
-      // iOS용 ID가 따로 제공되지 않았으므로 동일한 ID를 사용하거나 필요시 업데이트
+      // iOS용 ID (현재 Android와 동일하거나 필요시 교체)
       return 'ca-app-pub-7835510494346254/5027928255';
     }
   }
@@ -40,13 +40,20 @@ class AdService {
     required void Function(Ad) onAdLoaded,
     required void Function(Ad, LoadAdError) onAdFailedToLoad,
   }) {
+    debugPrint('BannerAd 요청 시작: ${bannerAdUnitId}');
     return BannerAd(
       adUnitId: bannerAdUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
-        onAdLoaded: onAdLoaded,
-        onAdFailedToLoad: onAdFailedToLoad,
+        onAdLoaded: (ad) {
+          debugPrint('BannerAd loaded successfully: ${ad.adUnitId}');
+          onAdLoaded(ad);
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: ${error.message}');
+          onAdFailedToLoad(ad, error);
+        },
       ),
     );
   }

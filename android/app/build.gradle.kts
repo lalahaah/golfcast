@@ -65,6 +65,14 @@ android {
             if (releaseSigningConfig != null) {
                 signingConfig = releaseSigningConfig
             }
+            
+            // ProGuard 설정 적용 (최종 출시를 위해 다시 활성화)
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
